@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div{
+            background-color: rgb(0, 0, 255);
+        }
+        .red{
+            background-color: red;
+        }
+        #green{
+            background-color: aqua;
+        }
+        div > article{
+            background-color: rgb(146, 50, 202);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        a:active{
+            background-color: green;
+        }
+        a:hover{
+            background-color: rgb(0, 255, 38);
+        }
+    </style>
+</head>
+<body>
+    <div class="red">
+        I am class selecter
+    </div>
+    <div>   
+        I am element selecter
+        <article>   
+            <p> 
+                I am child selecter
+            </p>
+        </article>
+    </div>
+    <div id="green">   
+        I am id selecter
+    </div>
+
+    <main>  
+
+        <a href="https://google.com">Go to Google </a>
+    </main>
+    
+</body>
+</html>

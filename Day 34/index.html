@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --bg-color-light: #f0f8ff; /* AliceBlue */
+            --text-color-light: #333;
+            --calc-bg-light: rgba(255, 255, 255, 0.9);
+            --button-bg-light: #e0e0e0;
+            --button-hover-light: #d0d0d0;
+            --button-active-light: #c0c0c0;
+            --operator-bg-light: #ffa500; /* Orange */
+            --operator-hover-light: #e69500;
+            --operator-active-light: #cc8400;
+            --display-bg-light: #f5f5f5;
+            --border-color-light: #ccc;
+            --history-bg-light: rgba(240, 240, 240, 0.95);
+            --history-border-light: #bbb;
+        }
+
+        body.dark-mode {
+            --bg-color-light: #2c2c2c; /* Dark Grey */
+            --text-color-light: #f0f0f0;
+            --calc-bg-light: rgba(0, 0, 0, 0.85);
+            --button-bg-light: #444;
+            --button-hover-light: #555;
+            --button-active-light: #666;
+            --operator-bg-light: #8b008b; /* DarkMagenta */
+            --operator-hover-light: #7a007a;
+            --operator-active-light: #690069;
+            --display-bg-light: #1a1a1a;
+            --border-color-light: #555;
+            --history-bg-light: rgba(30, 30, 30, 0.95);
+            --history-border-light: #444;
+        }
+
+        /* General Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: var(--bg-color-light); /* Fallback */
+            color: var(--text-color-light);
+            transition: background 0.5s ease, color 0.5s ease;
+            overflow: hidden; /* Prevent scrollbar from history panel */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g stroke="%23999" stroke-width="0.5"><path d="M0 50h100M50 0v100"></path><path d="M0 0l100 100M0 100L100 0"></path><circle cx="50" cy="50" r="30" fill="none"></circle></g></svg>');
+            background-size: 200px; /* Adjust as needed */
+            background-repeat: repeat;
+        }
+
+        .calculator-container {
+            background: var(--calc-bg-light);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 340px;
+            max-width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 1px solid var(--border-color-light);
+        }
+
+        .display {
+            background: var(--display-bg-light);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: right;
+            font-size: 2.2em;
+            color: var(--text-color-light);
+            min-height: 80px;
+            overflow-x: auto;
+            white-space: nowrap;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            border: 1px solid var(--border-color-light);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .display .input {
+            font-size: 0.7em;
+            color: #888;
+            min-height: 1.2em;
+        }
+
+        .display .result {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--text-color-light);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            background: var(--button-bg-light);
+            border: none;
+            border-radius: 8px;
+            padding: 20px 0;
+            font-size: 1.4em;
+            color: var(--text-color-light);
+            cursor: pointer;
+            outline: none;
+            transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.1s ease;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background: var(--button-hover-light);
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            background: var(--button-active-light);
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button.operator {
+            background: var(--operator-bg-light);
+            color: white;
+            font-weight: bold;
+        }
+
+        button.operator:hover {
+            background: var(--operator-hover-light);
+        }
+
+        button.operator:active {
+            background: var(--operator-active-light);
+        }
+
+        button.equals {
+            grid-column: span 2;
+            background: #28a745; /* Green */
+            color: white;
+        }
+
+        button.equals:hover {
+            background: #218838;
+        }
+
+        button.equals:active {
+            background: #1e7e34;
+        }
+
+        button.clear, button.backspace {
+            background: #dc3545; /* Red */
+            color: white;
+        }
+
+        button.clear:hover, button.backspace:hover {
+            background: #c82333;
+        }
+        button.clear:active, button.backspace:active {
+            background: #bd2130;
+        }
+
+        button.scientific {
+            font-size: 1.1em;
+            background: #87ceeb; /* SkyBlue */
+            color: #333;
+        }
+
+        body.dark-mode button.scientific {
+            background: #505050;
+            color: #f0f0f0;
+        }
+
+        button.scientific:hover {
+            background: #7ac1e3;
+        }
+        body.dark-mode button.scientific:hover {
+            background: #606060;
+        }
+
+        button.scientific:active {
+            background: #6bb4d8;
+        }
+        body.dark-mode button.scientific:active {
+            background: #707070;
+        }
+
+        /* Scientific Mode Specifics */
+        .scientific-buttons {
+            display: none; /* Hidden by default */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .scientific-buttons.active {
+            display: grid;
+        }
+
+        /* Toggle Buttons */
+        .toggle-buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .toggle-buttons button {
+            flex-grow: 1;
+            padding: 15px 10px;
+            font-size: 1em;
+            background: #6c757d; /* Grey */
+            color: white;
+        }
+
+        .toggle-buttons button:hover {
+            background: #5a6268;
+        }
+
+        .toggle-buttons button:active {
+            background: #495057;
+        }
+
+        /* History Panel */
+        .history-panel {
+            position: absolute;
+            top: 0;
+            right: -300px; /* Hidden off-screen */
+            width: 280px;
+            height: 100%;
+            background: var(--history-bg-light);
+            border-left: 1px solid var(--history-border-light);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+            transition: right 0.4s ease-in-out;
+            z-index: 1000;
+        }
+
+        .history-panel.active {
+            right: 0;
+        }
+
+        .history-panel h3 {
+            margin-top: 0;
+            color: var(--text-color-light);
+            border-bottom: 1px solid var(--history-border-light);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .history-list li {
+            background: var(--display-bg-light);
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: var(--text-color-light);
+            word-wrap: break-word;
+            border: 1px solid var(--border-color-light);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .history-list li:hover {
+            background: var(--button-hover-light);
+        }
+
+        .history-list li .expression {
+            color: #888;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+
+        .history-list li .result {
+            font-weight: bold;
+            color: var(--text-color-light);
+        }
+
+        .close-history-btn {
+            position: sticky;
+            top: 10px;
+            left: calc(100% - 40px); /* Adjust based on button size */
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1001; /* Ensure it's above history content */
+        }
+
+        .close-history-btn:hover {
+            background: #c82333;
+        }
+
+        .close-history-btn:active {
+            background: #bd2130;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes resultDisplay {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .display .result.animate {
+            animation: resultDisplay 0.3s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .calculator-container {
+                padding: 15px;
+                gap: 10px;
+                width: 95%;
+            }
+            .display {
+                font-size: 1.8em;
+                padding: 15px;
+                min-height: 60px;
+            }
+            button {
+                padding: 15px 0;
+                font-size: 1.2em;
+            }
+            button.scientific {
+                font-size: 0.9em;
+            }
+            .toggle-buttons button {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+            .history-panel {
+                width: 100%;
+                right: -100%; /* Hide completely for small screens */
+            }
+            .history-panel.active {
+                right: 0;
+            }
+            .close-history-btn {
+                 top: 15px;
+                 right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="display">
+            <div class="input" id="inputDisplay"></div>
+            <div class="result" id="resultDisplay">0</div>
+        </div>
+
+        <div class="buttons">
+            <button class="clear" data-value="C">C</button>
+            <button class="backspace" data-value="DEL">DEL</button>
+            <button class="operator" data-value="%">%</button>
+            <button class="operator" data-value="/">/</button>
+
+            <button data-value="7">7</button>
+            <button data-value="8">8</button>
+            <button data-value="9">9</button>
+            <button class="operator" data-value="*">x</button>
+
+            <button data-value="4">4</button>
+            <button data-value="5">5</button>
+            <button data-value="6">6</button>
+            <button class="operator" data-value="-">-</button>
+
+            <button data-value="1">1</button>
+            <button data-value="2">2</button>
+            <button data-value="3">3</button>
+            <button class="operator" data-value="+">+</button>
+
+            <button data-value="(">(</button>
+            <button data-value="0">0</button>
+            <button data-value=".">.</button>
+            <button class="equals" data-value="=">=</button>
+        </div>
+
+        <div class="scientific-buttons" id="scientificButtons">
+            <button class="scientific" data-value="pi">π</button>
+            <button class="scientific" data-value="e">e</button>
+            <button class="scientific" data-value="x^2">x²</button>
+            <button class="scientific" data-value="sqrt">√x</button>
+
+            <button class="scientific" data-value="x^3">x³</button>
+            <button class="scientific" data-value="cbrt">³√x</button>
+            <button class="scientific" data-value="^">x<sup>y</sup></button>
+            <button class="scientific" data-value="!">n!</button>
+
+            <button class="scientific" data-value="log">log</button>
+            <button class="scientific" data-value="ln">ln</button>
+            <button class="scientific" data-value="sin">sin</button>
+            <button class="scientific" data-value="asin">asin</button>
+
+            <button class="scientific" data-value="cos">cos</button>
+            <button class="scientific" data-value="acos">acos</button>
+            <button class="scientific" data-value="tan">tan</button>
+            <button class="scientific" data-value="atan">atan</button>
+        </div>
+
+        <div class="toggle-buttons">
+            <button id="modeToggle">Scientific Mode</button>
+            <button id="themeToggle">Dark Mode</button>
+            <button id="historyToggle">History</button>
+        </div>
+    </div>
+
+    <div class="history-panel" id="historyPanel">
+        <button class="close-history-btn" id="closeHistoryBtn">X</button>
+        <h3>Calculation History</h3>
+        <ul id="historyList" class="history-list">
+            </ul>
+    </div>
+
+    <audio id="clickSound" src="data:audio/wav;base64,UklGRlhoBwBXQVZFZm10IBAAAAABAAEARFEAAIC7AAABAAwBAAIADWEgbGFiZWxlCgAAAFpCagABAP///1tZAAAEACoAAABAAIADWF0YTEACAApAAAAQwACAA1hdGExMAAgAIAAAABkAAgANTg1OAABAP4AAAByAAgANTg1OAACAIAAAABkAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAAgANTg1OAADAP4AAAByAAgANTg1OAABAIAAAABkAAgANTg1OAACAP4AAAByAA

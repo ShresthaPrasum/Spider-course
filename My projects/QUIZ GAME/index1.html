@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Competition Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <section id="welcome-section" class="fullscreen-section">
+        <div class="section-content">
+            <h1>Welcome to the Quiz Game 🧠</h1>
+            <p>Get ready to test your knowledge!</p>
+            <button id="next-btn" class="action-btn">Next</button>
+        </div>
+    </section>
+
+    <section id="team-section" class="fullscreen-section">
+        <div class="section-content">
+            <h2>Select Your Team</h2>
+            <div id="team-selection-buttons">
+                <button class="team-btn" data-team="A">Team A</button>
+                <button class="team-btn" data-team="B">Team B</button>
+                <button class="team-btn" data-team="C">Team C</button>
+            </div>
+            <button id="goto-questions-btn" class="action-btn" disabled>Choose a Question</button>
+        </div>
+    </section>
+    
+    <div id="scoreboard" class="scoreboard-fixed">
+        <h3>Scores</h3>
+        <p>Team A: <span id="score-A">0</span></p>
+        <p>Team B: <span id="score-B">0</span></p>
+        <p>Team C: <span id="score-C">0</span></p>
+        <p class="current-team">Playing: <span id="current-team-display">None</span></p>
+    </div>
+
+    <section id="question-picker-section" class="fullscreen-section">
+        <div class="section-content">
+            <h2>Choose a Question Number</h2>
+            <div id="question-grid">
+                </div>
+        </div>
+    </section>
+
+    <section id="quiz-section" class="fullscreen-section">
+        <div class="section-content quiz-container">
+            <h2 id="question-title">Question will appear here</h2>
+            <div id="timer" class="timer-display">30</div>
+            <p id="question-text"></p>
+            <button id="start-timer-btn" class="action-btn">Start Timer & Show Question</button>
+            <div id="answer-buttons" class="hidden">
+                <button id="correct-btn" class="answer-btn correct">✅ Correct Answer</button>
+                <button id="wrong-btn" class="answer-btn wrong">❌ Wrong Answer</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="answer-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>The Correct Answer Is:</h3>
+            <p id="correct-answer-text"></p>
+            <button id="close-modal-btn" class="action-btn">Next Question</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

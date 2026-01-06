@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4 Player Tag (120 sec)</title>
+<style>
+  body {
+    background: #111;
+    color: #eee;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    overflow: hidden;
+  }
+  canvas {
+    background: #1a1a1a;
+    border: 2px solid #fff;
+    margin-top: 10px;
+  }
+  h2 { margin: 6px; }
+</style>
+</head>
+<body>
+<h2>4 Player Tag — Survive 120 Seconds!</h2>
+<p>Controls:</p>
+<ul style="text-align:left;">
+  <li>🟥 Player 1 (Red / “It”): W A S D</li>
+  <li>🟦 Player 2 (Blue): ↑ ↓ ← →</li>
+  <li>🟩 Player 3 (Green): T F G H</li>
+  <li>🟨 Player 4 (Yellow): I J K L</li>
+</ul>
+<canvas id="game" width="800" height="500"></canvas>
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+// === CONFIG ===
+const GAME_DURATION = 120; // seconds
+const TAG_DELAY = 700; // ms before new tag can occur
+const SPEED = 3;
+const RADIUS = 15;
+
+// === PLAYERS ===
+const players = [
+  {x:100, y:100, color:'red',   up:'w', down:'s', left:'a', right:'d', score:0, it:true},
+  {x:700, y:100, color:'blue',  up:'arrowup', down:'arrowdown', left:'arrowleft', right:'arrowright', score:0, it:false},
+  {x:100, y:400, color:'lime',  up:'t', down:'g', left:'f', right:'h', score:0, it:false},
+  {x:700, y:400, color:'yellow',up:'i', down:'k', left:'j', right:'l', score:0, it:false}
+];
+
+let keys = {};
+let lastTagTime = 0;
+let startTime = Date.now();
+let gameOver = false;
+
+document.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+document.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+function movePlayers() {
+  for (const p of players) {
+    if (keys[p.up]) p.y -= SPEED;
+    if (keys[p.down]) p.y += SPEED;
+    if (keys[p.left]) p.x -= SPEED;
+    if (keys[p.right]) p.x += SPEED;
+    p.x = Math.max(RADIUS, Math.min(canvas.width - RADIUS, p.x));
+    p.y = Math.max(RADIUS, Math.min(canvas.height - RADIUS, p.y));
+  }
+}
+
+function dist(a,b){const dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy);}
+
+function tagCheck() {
+  const tagger = players.find(p => p.it);
+  for (const other of players) {
+    if (other === tagger) continue;
+    if (dist(tagger, other) < RADIUS*2 && Date.now() - lastTagTime > TAG_DELAY) {
+      tagger.it = false;
+      other.it = true;
+      lastTagTime = Date.now();
+    }
+  }
+}
+
+function updateScores() {
+  for (const p of players) if (!p.it) p.score += 1/60;
+}
+
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#111';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const elapsed = (Date.now() - startTime) / 1000;
+  const timeLeft = Math.max(0, GAME_DURATION - Math.floor(elapsed));
+  drawHUD(timeLeft);
+
+  for (const p of players) {
+    ctx.beginPath();
+    ctx.fillStyle = p.color;
+    ctx.arc(p.x, p.y, RADIUS, 0, Math.PI*2);
+    ctx.fill();
+    if (p.it) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'white';
+      ctx.stroke();
+    }
+    ctx.fo — Survive 120 Seconds!
+    Controls:
+    
+    🟥 Player 1 (Red / “It”): W A S D
+    🟦 Player 2 (Blue): ↑ ↓ ← →
+    🟩 Player 3 (nt = '14px sans-serif';
+    ctx.fillStyle = 'white';
+    ctx.fillText(p.color.toUpperCase() + ': ' + Math.floor(p.score), p.x-25, p.y-20);
+  }
+
+  if (elapsed >= GAME_DURATION && !gameOver) endGame();
+}
+
+
+function gameLoop() {
+  if (gameOver) return;
+  movePlayers();
+  tagCheck();
+  updateScores();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+draw();
+gameLoop();
+</script>
+</body>
+</html>

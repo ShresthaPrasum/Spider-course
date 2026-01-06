@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .box{
+            width: 100px;
+            border: 2px solid black;
+            height: 100px;
+            text-align: center;
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box">Bhupendra Jogi</div>
+        <div class="box">Bhupendra Jogi</div>
+        <div class="box">Bhupendra Jogi</div>
+        <div class="box">Bhupendra Jogi</div>
+        <div class="box">Bhupendra Jogi</div>
+    </div>
+    <script>
+        // let boxes = document.getElementsByClassName("box")
+        // boxes.style.backgroundColor = "red"
+        // document.querySelector(".box").style.backgroundColor = "red"
+        j=document.querySelectorAll(".box")
+
+        for(i=0;i<=j.length;i++){
+            j[i].style.backgroundColor = "red"
+        }
+    </script>
+</body>
+</html>

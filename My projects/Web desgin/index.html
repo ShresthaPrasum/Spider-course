@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Document</title>
+    <style>
+        form{
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            row-gap: 8px;
+        
+        }
+        .submit:hover{
+            background: blue;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <form action="submit.php" method="get">
+        Name:
+        <div style="display:flex;">
+            <label for="firstname">First: </label>
+            <input type="text" name="firstname" id="firstname" placeholder="Hari" autofocus required>
+            
+            <label for="lastname">Last:</label>
+            <input type="text" name="lastname" id="lastname" placeholder="Shrestha" required>
+        </div>
+    
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" placeholder="harishrestha123@gmail.com" required>
+    <label for="number">Phone:</label>
+    <input type="number" name="number" placeholder="98-456-78890" required>
+    
+    <div>
+    <label for="gender">Gender:</label>
+    <br>
+    <input type="radio" name="gender" id="male" value="male">Male 
+    <input type="radio" name="gender" id=" female" value="female">Female 
+ 
+    <div>
+        <label for="interests">Interests:</label>
+        <br>
+        <input type="checkbox" value="Reading">Reading
+        <input type="checkbox" value="Coding">Coding
+        <input type="checkbox" value="Playing">playing
+    </div> 
+        
+    <label for="country">Country:</label>
+    <br>
+    <select name="country" id="country">
+        <option>Select your Country</option>
+        <option value="nepal">Nepal</option>
+        <option value="india">India</option>
+        <option value="china">China</option>
+    </select>
+    <br>
+    <input type="submit" value="Submit" class="submit">
+    </form>
+
+</body>
+</html>

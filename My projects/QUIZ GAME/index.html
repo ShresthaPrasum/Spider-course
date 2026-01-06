@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Whiz 🧠</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Bubblegum+Sans&display=swap');
+
+        :root {
+            --color-bg-1: #8B40A7; /* Purple */
+            --color-bg-2: #4A148C; /* Deep Purple */
+            --color-primary: #FFD700; /* Gold */
+            --color-secondary: #00FFFF; /* Cyan */
+            --color-text: #fff;
+            --color-correct-btn: #4CAF50; /* Green */
+            --color-wrong-btn: #F44336; /* Red */
+            --color-score-a: #FF6347; /* Tomato */
+            --color-score-b: #6495ED; /* Cornflower Blue */
+            --color-score-c: #3CB371; /* Medium Sea Green */
+            --color-dark-overlay: rgba(0, 0, 0, 0.6);
+            --color-modal-bg: rgba(0, 0, 0, 0.8);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--color-bg-1) 0%, var(--color-bg-2) 100%);
+            color: var(--color-text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '🧠';
+            font-size: 300px;
+            position: fixed; /* Fixed so it doesn't scroll with content */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1;
+            z-index: 0;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .section {
+            width: 100%;
+            max-width: 1200px;
+            padding: 30px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 100vh; /* Make each section fill viewport height */
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            background: var(--color-dark-overlay);
+            border-radius: 25px;
+            padding: 30px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 4rem;
+            color: var(--color-primary);
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
+            margin: 10px 0 20px;
+            letter-spacing: 2px;
+        }
+        h2 {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 2.5rem;
+            color: var(--color-secondary);
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            padding: 15px 30px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+            color: var(--color-text);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Welcome Section */
+        #welcome-section {
+            min-height: 100vh;
+            justify-content: center;
+        }
+        #welcome-section .container {
+            background: var(--color-dark-overlay);
+            padding: 50px;
+        }
+        #next-welcome-btn {
+            background-color: var(--color-correct-btn);
+            margin-top: 30px;
+        }
+
+        /* Main Game Section */
+        #main-game-section {
+            min-height: 100vh;
+            justify-content: flex-start;
+            padding-top: 50px;
+        }
+        #game-content {
+            display: none; /* Hidden by default, shown after team selection */
+            width: 100%;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .team-selection {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            margin-bottom: 40px; 
+        }
+
+        .team-btn {
+            background-color: var(--color-secondary);
+        }
+        #teamA_btn { background-color: var(--color-score-a); }
+        #teamB_btn { background-color: var(--color-score-b); }
+        #teamC_btn { background-color: var(--color-score-c); }
+        .team-btn.active {
+            box-shadow: 0 0 0 5px var(--color-primary), 0 0 20px var(--color-primary);
+            transform: scale(1.05);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            align-items: center;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .timer-container { order: -1; } 
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .score {
+            padding: 10px 20px;
+            border-radius: 10px;
+            min-width: 100px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        #scoreA { background-color: var(--color-score-a); }
+        #scoreB { background-color: var(--color-score-b); }
+        #scoreC { background-color: var(--color-score-c); }
+
+        #current-team-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin: 0;
+            grid-column: span 2; /* Span across both columns on desktop */
+        }
+        @media (max-width: 768px) {
+            #current-team-display { grid-column: span 1; } /* Reset on small screens */
+        }
+
+        #choose-question-btn {
+            background-color: var(--color-secondary);
+            margin-top: 30px;
+        }
+
+        #question-selection-section {
+            min-height: 100vh;
+            justify-content: flex-start; /* Align content to the top */
+            padding-top: 50px;
+            display: none; /* Hidden by default */
+        }
+        #question-selection-section .container {
+            margin-bottom: 25px;
+        }
+
+        .question-picker {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .question-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 2px solid var(--color-secondary);
+            border-radius: 8px;
+            padding: 10px 5px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1 / 1; /* Make them square */
+            user-select: none;
+        }
+        .question-box:hover:not(.used):not(.disabled-picker) {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .question-box.used {
+            background-color: rgba(100, 100, 100, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.6);
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        .question-box.disabled-picker {
+            pointer-events: none; /* Disable clicks */
+            opacity: 0.7; /* Make it slightly faded */
+        }
+
+        .question-area {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            min-height: 180px; /* Increased min-height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 25px; /* Space from picker */
+        }
+
+        .question-area .timer-container {
+            margin: 0; /* Remove auto margin */
+            margin-bottom: 15px;
+        }
+
+        #question-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--color-text);
+            margin: 0;
+        }
+
+        .question-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        #start-timer-btn { background-color: var(--color-secondary); }
+        #correct-answer-btn { background-color: var(--color-correct-btn); }
+        #wrong-answer-btn { background-color: var(--color-wrong-btn); }
+
+        /* Answer Modal */
+        .answer-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-modal-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .answer-modal-content {
+            background: linear-gradient(45deg, var(--color-bg-1), var(--color-bg-2));
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 3px solid var(--color-primary);
+            max-width: 600px;
+            transform: scale(0.8);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bounce effect */
+        }
+
+        .answer-modal-overlay.fade-in {
+            opacity: 1;
+        }
+        .answer-modal-overlay.fade-in .answer-modal-content {
+            transform: scale(1);
+        }
+        .answer-modal-overlay.fade-out {
+            opacity: 0;
+        }
+        .answer-modal-overlay.fade-out .answer-modal-content {
+            transform: scale(0.8);
+        }
+
+        #answer-modal-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0;
+            line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* End Screen */
+        #end-screen {
+            display: none;
+            margin-top: 40px;
+            min-height: 100vh;
+        }
+
+        #result-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+        }
+
+        .final-scores {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .final-score-item {
+            padding: 20px;
+            border-radius: 15px;
+            color: var(--color-text);
+            font-size: 1.5rem;
+            font-weight: 700;
+            min-width: 200px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        #final-score-A { background-color: var(--color-score-a); }
+        #final-score-B { background-color: var(--color-score-b); }
+        #final-score-C { background-color: var(--color-score-c); }
+
+        #restart-btn {
+            background-color: var(--color-secondary);
+            color: var(--color-bg-2);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.8rem; }
+            h2 { font-size: 1.8rem; }
+            .btn { font-size: 1.2rem; padding: 12px 25px; }
+            .score { font-size: 1rem; padding: 8px 15px; min-width: 80px;}
+            .timer-text { font-size: 2rem; }
+            #question-text { font-size: 1.4rem; }
+            .question-box { font-size: 0.9rem; padding: 8px 3px; }
+            .answer-modal-content { padding: 25px; }
+            #answer-modal-text { font-size: 1.5rem; }
+            .final-score-item { font-size: 1.2rem; min-width: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-section" class="section">
+        <div class="container">
+            <h1>Welcome to the Quiz Game!</h1>
+            <p style="font-size: 1.3rem;">Test your knowledge across various categories. Gather your teams and get ready for a fun challenge!</p>
+            <button id="next-welcome-btn" class="btn">Next</button>
+        </div>
+    </div>
+
+    <div id="main-game-section" class="section">
+        <div class="container">
+            <h2>Team Up for the Challenge!</h2>
+            <div class="team-selection">
+                <button id="teamA_btn" class="team-btn btn" data-team="A">Team A</button>
+                <button id="teamB_btn" class="team-btn btn" data-team="B">Team B</button>
+                <button id="teamC_btn" class="team-btn btn" data-team="C">Team C</button>
+            </div>
+
+            <div id="game-content">
+                <div class="dashboard">
+                    <div class="score-board">
+                        <div class="score" id="scoreA">Team A: <span id="score-val-A">0</span></div>
+                        <div class="score" id="scoreB">Team B: <span id="score-val-B">0</span></div>
+                        <div class="score" id="scoreC">Team C: <span id="score-val-C">0</span></div>
+                    </div>
+                    <div>
+                        <h3 id="current-team-display">Current Team: None</h3>
+                    </div>
+                </div>
+                <button id="choose-question-button" class="btn" style="display: none;">Choose a Question</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="question-selection-section" class="section">
+        <div class="container">
+            <h2>Select Your Question!</h2>
+            <div class="question-picker" id="question-picker">
+                </div>
+
+            <div class="question-area">
+                <div class="timer-container">
+                    <span class="timer-text" id="timer">30</span>
+                </div>
+                <h2 id="question-text">Select a question from the grid above.</h2>
+                <div class="question-actions">
+                    <button id="start-timer-btn" class="btn" disabled>Start Timer</button>
+                    <button id="correct-answer-btn" class="btn" disabled>✅ Correct Answer</button>
+                    <button id="wrong-answer-btn" class="btn" disabled>❌ Wrong Answer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="answer-modal" class="answer-modal-overlay">
+        <div class="answer-modal-content">
+            <p id="answer-modal-text"></p>
+        </div>
+    </div>
+
+    <div id="end-screen" class="section">
+        <div class="container">
+            <h2 id="result-text"></h2>
+            <div class="final-scores">
+                <div class="final-score-item" id="final-score-A">Team A: <span id="final-score-val-A">0</span></div>
+                <div class="final-score-item" id="final-score-B">Team B: <span id="final-score-val-B">0</span></div>
+                <div class="final-score-item" id="final-score-C">Team C: <span id="final-score-val-C">0</span></div>
+            </div>
+            <button id="restart-btn" class="btn">Play Again</button>
+        </div>
+    </div>
+    
+    <script>
+        const allQuestions = [
+            { question: "What comes next: 3, 9, 27, 81, ?", answer: "243" },
+            { question: "Find the missing number: 1, 4, 9, 16, ?, 36", answer: "25" },
+            { question: "If TWO + TWO = FOUR, what number does FOUR represent?", answer: "9786" },
+            { question: "A clock shows 12:50. What is the angle between the hour and minute hand?", answer: "115°" },
+            { question: "You are in a room with 3 light switches. Only one switch turns on a bulb in another room. You can enter the bulb room only once. How do you find the switch?", answer: "Turn on one switch, wait, turn it off. Turn on another and go to the room. Warm bulb = first switch, on bulb = second, off and cold = third." },
+            { question: "I have three digits. All are odd. The sum is 15. I am greater than 500. What number could I be?", answer: "753 (example)" },
+            { question: "If ALLIGATOR is coded as BMMJHBUPS, what is CROCODILE?", answer: "DSPDPEJMF" },
+            { question: "Which number when squared gives 12321?", answer: "111" },
+            { question: "In a certain language, TREE is coded as UVGG. How is LEAF coded?", answer: "NGCF" },
+            { question: "How many squares are there in a 4x4 grid?", answer: "30" },
+            { question: "If 3x – 7 = 2x + 8, what is x?", answer: "x = 15" },
+            { question: "A puzzle box has 5 buttons: only one opens it. If you press 2 wrong buttons, you get locked out. What’s the best strategy to maximize chances in 2 tries?", answer: "Try 1 button, then a second (max 2 tries), no guaranteed way, but improves odds." },
+            { question: "4 people can build 4 walls in 4 days. How long would it take 8 people to build 8 walls?", answer: "4 days" },
+            { question: "A cube has a surface area of 150 cm². What is the length of one edge?", answer: "5 cm" },
+            { question: "What is the 12th term in the Fibonacci sequence?", answer: "144" },
+            { question: "A palindrome number is multiplied by 11 and gives 5335. What was the number?", answer: "485" },
+            { question: "If x^2 + x = 132, find x.", answer: "x = 11" },
+            { question: "Divide Rs. 750 among A, B, and C in the ratio 2:3:5. How much does B get?", answer: "Rs. 225" },
+            { question: "What is the LCM of 3x^2, 6xy, 9x^3y^2?", answer: "18x^3y^2" },
+            { question: "Factorize: x^3 + 27", answer: "(x+3)(x^2-3x+9)" },
+            { question: "If a² + b² = 100 and ab = 30, find (a + b)².", answer: "160" },
+            { question: "The average of 10 numbers is 32. Two numbers are 20 and 24. What is the average of the remaining 8?", answer: "34" },
+            { question: "Simplify: (3x^2 - 12x) ÷ 3x", answer: "x-4" },
+            { question: "What is the cube root of 3375?", answer: "15" },
+            { question: "If sin A = 3/5, and A is acute, find cos A.", answer: "4/5" },
+            { question: "A train travels 240 km in 3 hours. How long will it take to travel 560 km at the same speed?", answer: "7 hours" },
+            { question: "A rectangle has a perimeter of 60 cm and a length of 18 cm. What is its area?", answer: "144 cm²" },
+            { question: "Solve: 2x^2 + 7x + 3 = 0", answer: "x = -3, x = -0.5" },
+            { question: "Simplify: (2x^2 + 3x - 2) / (x + 2)", answer: "2x-1" },
+            { question: "What is the derivative of x^2 + 3x + 7?", answer: "2x+3" },
+            { question: "A number increases by 25%, then decreases by 20%. What is the net percent change?", answer: "0%" },
+            { question: "If water boils at 100°C and freezes at 0°C, what is 25°C in Fahrenheit?", answer: "77°F" },
+            { question: "How many neutrons are there in an oxygen atom (O-16)?", answer: "8" },
+            { question: "Which organ in humans is responsible for maintaining balance?", answer: "Inner ear" },
+            { question: "Which body part produces bile?", answer: "Liver" },
+            { question: "What happens to your weight on the moon compared to Earth?", answer: "1/6th of Earth" },
+            { question: "Which gas is released during photosynthesis?", answer: "Oxygen" },
+            { question: "Which particle has no electric charge?", answer: "Neutron" },
+            { question: "What is the function of white blood cells?", answer: "Fight infection" },
+            { question: "Which vitamin helps blood clot?", answer: "Vitamin K" },
+            { question: "Name the hormone responsible for growth in humans.", answer: "Growth Hormone (GH)" },
+            { question: "How many bones does an adult human have?", answer: "206" },
+            { question: "What device is used to measure electric current?", answer: "Ammeter" },
+            { question: "What causes day and night?", answer: "Earth’s rotation" },
+            { question: "Why does a compass needle always point north?", answer: "Earth’s magnetic field" },
+            { question: "Which part of the eye controls the amount of light entering it?", answer: "Iris" },
+            { question: "Who developed the theory of general relativity?", answer: "Albert Einstein" },
+            { question: "Which color has the shortest wavelength in the visible spectrum?", answer: "Violet" },
+            { question: "What kind of lens is used to correct short-sightedness?", answer: "Concave lens" },
+            { question: "A glass prism splits white light into how many colors?", answer: "7" },
+            { question: "What is the chemical symbol for gold?", answer: "Au" },
+            { question: "Who wrote the C programming language?", answer: "Dennis Ritchie" },
+            { question: "What does “int main()” mean in C?", answer: "Starting point of C program" },
+            { question: "Which function is used to print output in C?", answer: "printf" },
+            { question: "How do you write a comment in C?", answer: "// for single-line, /* */ for multi-line" },
+            { question: "What is the output of this code: int a = 10; printf('%d', ++a);", answer: "11" },
+            { question: "What is the size of an integer in C (in bytes)?", answer: "4 bytes" },
+            { question: "What does “scanf” do in C?", answer: "Takes input" },
+            { question: "What is the keyword to declare a constant in C?", answer: "const" },
+            { question: "What does “break” do inside a loop in C?", answer: "Exits loop immediately" },
+            { question: "Who is the first king of unified Nepal?", answer: "Prithvi Narayan Shah" },
+            { question: "What year was Nepal declared a republic?", answer: "2008" },
+            { question: "How many articles are there in the Constitution of Nepal 2072?", answer: "308" },
+            { question: "What is the height of Mount Everest according to latest data?", answer: "8,848.86 meters" },
+            { question: "Which Nepalese place is listed as a UNESCO world heritage site?", answer: "Pashupatinath, Swayambhunath, etc." },
+            { question: "Who was the first elected Prime Minister of Nepal?", answer: "BP Koirala" },
+            { question: "What is the deepest lake in Nepal?", answer: "Rara Lake" },
+            { question: "What is the script used in Nepali currency?", answer: "Devnagari" },
+            { question: "What is the full name of NCP (political party)?", answer: "Nepal Communist Party" },
+            { question: "Which river forms the deepest gorge in Nepal?", answer: "Kali Gandaki" },
+            { question: "Who was the 2nd President of Nepal?", answer: "Bidhya Devi Bhandari" },
+            { question: "Which is the largest province of Nepal by area?", answer: "Province No. 6 (Karnali)" },
+            { question: "What is Nepal's national game?", answer: "Volleyball" },
+            { question: "A man is found murdered on Sunday. The wife says she was sleeping, the cook was cooking, the gardener was picking vegetables, and the maid was cleaning. Who is lying?", answer: "The gardener (no one picks vegetables on Sunday)" },
+            { question: "Find the next number: 10, 13, 16, 19, ?, ?", answer: "22, 25" },
+            { question: "Which word is always spelled incorrectly in every dictionary?", answer: "Incorrectly" },
+            { question: "Forward I am heavy, backward I am not. What am I?", answer: "Ton" },
+            { question: "What has hands but can’t clap?", answer: "A clock" },
+            { question: "If 6 cats kill 6 mice in 6 minutes, how many cats are needed to kill 100 mice in 100 minutes?", answer: "6" },
+            { question: "What comes once in a minute, twice in a moment, but never in a thousand years?", answer: "The letter 'M'" },
+            { question: "A man buys a watch for Rs. 1000 and sells it for Rs. 1200. Then buys it back for Rs. 1300 and sells it again for Rs. 1500. How much profit did he make?", answer: "Rs. 400" },
+            { question: "I am an odd number. Remove one letter and I become even. What am I?", answer: "Seven" },
+            { question: "The more you take, the more you leave behind. What am I?", answer: "Footsteps" },
+            { question: "What five-letter word becomes shorter when you add two letters to it?", answer: "Short" },
+            { question: "What comes next: J, F, M, A, M, J, ?", answer: "J (July)" },
+            { question: "How many 9s are there between 1 and 100?", answer: "20" },
+            { question: "What 3 positive numbers give the same result when multiplied and added?", answer: "1, 2, 3" },
+            { question: "If you multiply me by any number, the answer is always the same. What am I?", answer: "0" },
+            { question: "What gets wetter the more it dries?", answer: "Towel" },
+            { question: "A man has 53 socks in a drawer: 21 black, 15 blue, and 17 red. How many socks must he take out to be sure he has a matching pair?", answer: "4 socks" },
+            { question: "Which has more value: 1kg of gold or 1kg of cotton?", answer: "Equal" },
+            { question: "How many seconds are there in 1 day?", answer: "86,400" },
+            { question: "A car travels 120 km in 2 hours and returns in 3 hours. What is the average speed?", answer: "48 km/h" },
+            { question: "If a boy is twice as old as his sister, and the sister is 10, how old will the boy be in 5 years?", answer: "25 years" },
+            { question: "If 5 workers can finish a wall in 12 hours, how long for 10 workers?", answer: "6 hours" },
+            { question: "What is the sum of the first 50 natural numbers?", answer: "1,275" },
+            { question: "How many diagonals does a hexagon have?", answer: "9" },
+            { question: "What is the square root of 1024?", answer: "32" },
+            { question: "In a party of 15 people, each person shakes hands with every other person once. How many handshakes?", answer: "105" },
+            { question: "What is the value of 0!?", answer: "1" }
+        ];
+
+        // Global variables for game state
+        let scores = { teamA: 0, teamB: 0, teamC: 0 };
+        let currentTeam = null; // 'A', 'B', or 'C'
+        let questionsAnsweredCount = 0; // Tracks how many of the 100 questions have been used
+        let timerInterval = null;
+        let timeLeft = 0;
+        let currentQuestionObject = null; // Holds the currently active question object
+        let questionOrder = []; // Shuffled list of all 100 questions
+        let usedQuestionPickerNumbers = new Set(); // Stores the numbers (1-100) from the picker that have been used
+
+        // DOM Elements
+        const welcomeSection = document.getElementById('welcome-section');
+        const mainGameSection = document.getElementById('main-game-section');
+        const teamSelectionBtns = document.querySelectorAll('.team-btn');
+        const currentTeamDisplay = document.getElementById('current-team-display');
+        const scoreDisplays = {
+            A: document.getElementById('score-val-A'),
+            B: document.getElementById('score-val-B'),
+            C: document.getElementById('score-val-C')
+        };
+        const chooseQuestionButton = document.getElementById('choose-question-button');
+        const questionSelectionSection = document.getElementById('question-selection-section');
+        const timerDisplay = document.getElementById('timer');
+        const questionTextElement = document.getElementById('question-text');
+        const questionPickerContainer = document.getElementById('question-picker');
+        const startTimerBtn = document.getElementById('start-timer-btn');
+        const correctAnswerBtn = document.getElementById('correct-answer-btn');
+        const wrongAnswerBtn = document.getElementById('wrong-answer-btn');
+        const answerModal = document.getElementById('answer-modal');
+        const answerModalText = document.getElementById('answer-modal-text');
+        const endScreen = document.getElementById('end-screen');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // --- Event Listeners ---
+        document.getElementById('next-welcome-btn').addEventListener('click', () => {
+            mainGameSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        teamSelectionBtns.forEach(btn => {
+            btn.addEventListener('click', () => selectTeam(btn.dataset.team));
+        });
+
+        chooseQuestionButton.addEventListener('click', () => {
+            questionSelectionSection.style.display = 'flex'; // Show question selection section
+            questionSelectionSection.scrollIntoView({ behavior: 'smooth' }); // Scroll to it
+            // Hide the "Choose a Question" button after clicking
+            chooseQuestionButton.style.display = 'none';
+        });
+
+        startTimerBtn.addEventListener('click', startTimer);
+        correctAnswerBtn.addEventListener('click', () => handleAnswer(true));
+        wrongAnswerBtn.addEventListener('click', () => handleAnswer(false));
+        restartBtn.addEventListener('click', restartQuiz);
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', initializeGame);
+
+        function initializeGame() {
+            welcomeSection.style.display = 'flex';
+            mainGameSection.style.display = 'flex'; 
+            document.getElementById('game-content').style.display = 'none'; // Hide actual game content initially
+            questionSelectionSection.style.display = 'none'; // Hide question selection initially
+            endScreen.style.display = 'none';
+
+            // Shuffle questions and prepare question picker
+            shuffleArray(allQuestions);
+            questionOrder = allQuestions.slice(); // Create a copy of shuffled questions
+
+            createQuestionPicker();
+            resetGameElements(); // Reset all game-related UI elements
+        }
+
+        function selectTeam(team) {
+            if (currentTeam) { // Remove active class from previously selected team
+                document.getElementById(`team${currentTeam}_btn`).classList.remove('active');
+            }
+            currentTeam = team;
+            document.getElementById(`team${currentTeam}_btn`).classList.add('active');
+            currentTeamDisplay.textContent = `Current Team: Team ${currentTeam}`;
+            
+            // Show game content after team is selected for the first time
+            if (document.getElementById('game-content').style.display === 'none') {
+                document.getElementById('game-content').style.display = 'flex';
+            }
+            // Show the "Choose a Question" button
+            chooseQuestionButton.style.display = 'block';
+            
+            // Reset question state and enable picker (if not already during a game)
+            resetQuestionState();
+            disableQuestionPicker(false); 
+        }
+
+        function createQuestionPicker() {
+            questionPickerContainer.innerHTML = '';
+            for (let i = 1; i <= 100; i++) {
+                const questionBox = document.createElement('div');
+                questionBox.classList.add('question-box');
+                questionBox.textContent = i;
+                questionBox.dataset.questionNumber = i; // Store original number
+                questionBox.addEventListener('click', () => selectQuestionFromPicker(i));
+                questionPickerContainer.appendChild(questionBox);
+            }
+        }
+
+        function selectQuestionFromPicker(questionNumber) {
+            if (usedQuestionPickerNumbers.has(questionNumber)) {
+                return; // Already used
+            }
+            
+            clearInterval(timerInterval); // Stop any active timer
+            timerDisplay.textContent = '30'; // Reset timer display
+
+            // Find the actual question object from our shuffled order
+            const questionIndexInOrder = questionNumber - 1; 
+            currentQuestionObject = questionOrder[questionIndexInOrder];
+            
+            // Show placeholder text initially
+            questionTextElement.textContent = "Question selected! Press 'Start Timer' to reveal and begin.";
+            
+            // Mark picker box as used and disable it permanently
+            const selectedBox = document.querySelector(`.question-box[data-question-number="${questionNumber}"]`);
+            selectedBox.classList.add('used');
+            selectedBox.disabled = true; // For actual button behavior if it were a button
+            usedQuestionPickerNumbers.add(questionNumber);
+            
+            // Enable start timer button, disable answer buttons until timer starts
+            startTimerBtn.disabled = false;
+            correctAnswerBtn.disabled = true; 
+            wrongAnswerBtn.disabled = true;   
+
+            // Disable all other picker boxes temporarily while a question is active
+            disableQuestionPicker(true);
+        }
+
+        function startTimer() {
+            if (!currentQuestionObject) return; // No question loaded
+            
+            // Reveal the actual question text
+            questionTextElement.textContent = currentQuestionObject.question;
+
+            timeLeft = 30;
+            timerDisplay.textContent = timeLeft;
+            
+            startTimerBtn.disabled = true; // Disable start button once timer begins
+            correctAnswerBtn.disabled = false; // Enable answer buttons
+            wrongAnswerBtn.disabled = false;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleAnswer(false, true); // Time's up, automatically wrong
+                }
+            }, 1000);
+        }
+
+        function handleAnswer(isCorrect, timedOut = false) {
+            clearInterval(timerInterval); // Stop timer immediately
+            disableAnswerButtons(); // Disable "Correct/Wrong" buttons
+            
+            const actualCorrectAnswer = currentQuestionObject.answer;
+            let message = '';
+            
+            if (isCorrect) {
+                scores[`team${currentTeam}`]++;
+                scoreDisplays[currentTeam].textContent = scores[`team${currentTeam}`];
+                message = `Correct! 🎉 The answer was: ${actualCorrectAnswer}`;
+            } else {
+                message = timedOut ? `Time's Up! ⏰ The correct answer was: ${actualCorrectAnswer}` : `Wrong! ❌ The correct answer was: ${actualCorrectAnswer}`;
+            }
+
+            showAnswerModal(message);
+            
+            questionsAnsweredCount++;
+            
+            // Wait for the modal to be read/closed before progressing
+            setTimeout(() => {
+                hideAnswerModal();
+                currentQuestionObject = null; // Clear current question
+                resetQuestionState(); // Reset buttons for next round
+
+                if (questionsAnsweredCount >= 100) {
+                    endGame();
+                } else {
+                    switchTeam();
+                    // After answering, go back to main game section and show "Choose a Question" button
+                    mainGameSection.scrollIntoView({ behavior: 'smooth' });
+                    questionSelectionSection.style.display = 'none'; // Hide question selection section
+                    chooseQuestionButton.style.display = 'block'; // Show "Choose a Question" button again
+                    disableQuestionPicker(false); // Enable picker boxes for next selection
+                }
+            }, 3000); // Display answer for 3 seconds
+        }
+
+        function showAnswerModal(message) {
+            answerModalText.textContent = message;
+            answerModal.style.display = 'flex'; // Show modal
+            answerModal.classList.add('fade-in'); // Apply fade-in animation
+            answerModal.style.opacity = '1'; // Ensure it's fully visible
+            document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+        }
+
+        function hideAnswerModal() {
+            answerModal.classList.remove('fade-in');
+            answerModal.classList.add('fade-out'); // Apply fade-out animation
+            answerModal.style.opacity = '0';
+            setTimeout(() => {
+                answerModal.style.display = 'none';
+                answerModal.classList.remove('fade-out'); // Clean up fade-out class
+                document.body.style.overflow = ''; // Restore scrolling
+            }, 500); // Match fade-out duration
+        }
+
+        function switchTeam() {
+            const teams = ['A', 'B', 'C'];
+            const currentIndex = teams.indexOf(currentTeam);
+            currentTeam = teams[(currentIndex + 1) % teams.length];
+            currentTeamDisplay.textContent = `Current Team: Team ${currentTeam}`;
+            // Visually update active team button
+            teamSelectionBtns.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`team${currentTeam}_btn`).classList.add('active');
+        }
+
+        function disableAnswerButtons() {
+            correctAnswerBtn.disabled = true;
+            wrongAnswerBtn.disabled = true;
+        }
+
+        function resetQuestionState() {
+            questionTextElement.textContent = "Select a question from the grid above.";
+            timerDisplay.textContent = '30';
+            startTimerBtn.disabled = true;
+            disableAnswerButtons();
+        }
+
+        function disableQuestionPicker(disable) {
+            document.querySelectorAll('.question-box').forEach(box => {
+                if (!box.classList.contains('used')) { // Only enable/disable if not already used
+                    if (disable) {
+                        box.classList.add('disabled-picker');
+                        box.style.pointerEvents = 'none'; // Explicitly disable pointer events
+                    } else {
+                        box.classList.remove('disabled-picker');
+                        box.style.pointerEvents = 'auto'; // Re-enable pointer events
+                    }
+                }
+            });
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            mainGameSection.style.display = 'none';
+            questionSelectionSection.style.display = 'none';
+            endScreen.style.display = 'flex';
+            endScreen.scrollIntoView({ behavior: 'smooth' }); // Scroll to end screen
+            
+            let winner = 'Nobody';
+            let maxScore = 0;
+            let tiedTeams = [];
+            
+            // Update final scores display
+            document.getElementById('final-score-val-A').textContent = scores.teamA;
+            document.getElementById('final-score-val-B').textContent = scores.teamB;
+            document.getElementById('final-score-val-C').textContent = scores.teamC;
+
+            for (const team in scores) {
+                const teamScore = scores[team];
+                if (teamScore > maxScore) {
+                    maxScore = teamScore;
+                    winner = `Team ${team.slice(-1).toUpperCase()}`;
+                    tiedTeams = [winner];
+                } else if (teamScore === maxScore && maxScore > 0) {
+                    tiedTeams.push(`Team ${team.slice(-1).toUpperCase()}`);
+                }
+            }
+            
+            if (tiedTeams.length > 1) {
+                document.getElementById('result-text').textContent = `It's a Tie! The winners are ${tiedTeams.join(' and ')}!`;
+            } else if (maxScore === 0) {
+                document.getElementById('result-text').textContent = `Game Over! No one scored any points.`;
+            } else {
+                document.getElementById('result-text').textContent = `Game Over! The winner is ${winner}!`;
+            }
+        }
+
+        function restartQuiz() {
+            scores = { teamA: 0, teamB: 0, teamC: 0 };
+            questionsAnsweredCount = 0;
+            usedQuestionPickerNumbers.clear();
+            currentTeam = null;
+            currentQuestionObject = null;
+            clearInterval(timerInterval);
+            
+            // Reset score displays
+            scoreDisplays.A.textContent = '0';
+            scoreDisplays.B.textContent = '0';
+            scoreDisplays.C.textContent = '0';
+
+            endScreen.style.display = 'none';
+            welcomeSection.style.display = 'flex'; // Show welcome screen again
+            document.getElementById('game-content').style.display = 'none'; // Hide game content
+            questionSelectionSection.style.display = 'none'; // Hide question selection section
+            chooseQuestionButton.style.display = 'none'; // Hide the choose question button
+            welcomeSection.scrollIntoView({ behavior: 'smooth' }); // Scroll back to welcome
+
+            // Reset team buttons visual state
+            teamSelectionBtns.forEach(btn => btn.classList.remove('active'));
+            currentTeamDisplay.textContent = 'Current Team: None';
+            
+            // Reset question picker boxes
+            document.querySelectorAll('.question-box').forEach(box => {
+                box.classList.remove('used', 'disabled-picker');
+                box.style.pointerEvents = 'auto'; // Re-enable pointer events
+            });
+            
+            // Re-shuffle questions for a new game
+            shuffleArray(allQuestions);
+            questionOrder = allQuestions.slice();
+
+            resetQuestionState(); // Reset question display and action buttons
+        }
+
+        function resetGameElements() {
+            timerDisplay.textContent = '30';
+            questionTextElement.textContent = "Select a question from the grid above.";
+            startTimerBtn.disabled = true;
+            correctAnswerBtn.disabled = true;
+            wrongAnswerBtn.disabled = true;
+            answerModal.style.display = 'none';
+            answerModal.classList.remove('fade-in', 'fade-out');
+        }
+
+        // Utility function to shuffle an array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+    </script>
+</body>
+</html>

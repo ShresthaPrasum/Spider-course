@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="image.png" />
+    <style>
+      :root {
+        --color: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        display: flex;
+        top: 10px;
+        padding: 10px;
+      }
+      .right {
+        display: flex;
+        list-style-type: none;
+        justify-content: flex-end;
+        margin-left: 400px;
+        gap: 40px;
+        margin-top: 20px;
+        margin-right: 100px;
+        color: rgb(72, 69, 69);
+        font-family: var(--color);
+        font-size: 13px;
+      }
+      .title {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        font-weight: 700;
+        font-size: x-large;
+        /* margin-left: 35px; */
+        margin-top: 15px;
+      }
+      .text {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        margin-left: -97px;
+        margin-top: 46px;
+        margin-bottom: 12px;
+        font-size: xx-small;
+        color: grey;
+      }
+      img {
+        height: px;
+        width: 55px;
+        border-radius: 70px;
+        margin-left: 320px;
+        margin-top: 10px;
+      }
+      .main {
+        text-align: center;
+        margin-top: 50px;
+        font-size: 45px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      } 
+      .para {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        font-size: x-large;
+ 
+      }
+      .box {
+        display: flex;
+        justify-content: center; /* centers content horizontally */
+        align-items: center;     /* centers content vertically */
+        width: 300px;
+        height: 50px;
+        text-align: center;
+        border: 0px none;
+        background-color: #00b6d1;
+        border-radius: 5px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 80px;
+        margin-top: 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+      }
+      .language{
+        width: 100%;
+        height: 300px;
+        display: grid;
+        grid-template-columns: 400px 400px 400px;
+        grid-template-rows: 200px;
+        column-gap: 20px;
+        row-gap: 20px;
+        gap: 20px;
+        margin: 0 auto;
+        justify-content: center;
+        justify-items: center;
+      }
+      .language1,
+      .language2,
+      .language3,
+      .language4,
+      .language5,
+      .language6 {
+        width: 330px;
+        height: 170px;
+        background-color: rgb(243, 239, 239);
+        text-align: center;
+        
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+      header{
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      a{
+        text-decoration: none;
+        color: rgb(255, 255, 255);
+        font-weight: bold;
+        background-color: #5cb85c;
+        padding: 10px 15px;
+        text-align: center;
+        display: inline-block;
+        border-radius: 5px;
+        margin-top: 40px;
+        font-size: 14px;
+      }
+      .language p{
+        font-size: 14px;
+        color: grey;
+        margin-top: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="img">
+        <img src="image.png" alt="image" />
+      </div>
+      <div class="title">UltraEdit</div>
+      <div class="text" style="display: inline">An Idera.Inc. Company</div>
+      <div class="nav">
+        <nav>
+          <ul class="right">
+            <li>Products</li>
+            <li>Pricing</li>
+            <li>Resources</li>
+            <li>About us</li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <header>
+    <div class="main">
+      Download <b>UltraEdit</b> for Windows
+    </header>
+      <p class="para">
+        Download and try UltraEdit before you buy it! This download includes the 
+        full Windows <br>version of the text editor.
+      </p>
+      <div class="box">
+        DOWNLOAD MAC OR LINUX VERSION
+      </div>
+    </div>
+      <div class="language">
+        <div class="language1">
+            <header>English</header>
+            <p>इंग्लिश</p>
+            <a href="ue_english_64.exe">Download 64x bit</a>
+        </div>
+        <div class="language2">
+            <header>français</header>
+            <p>Frence</p>
+            <a href="ue_french_64.exe">Download 64x bit</a>
+        </div>
+        <div class="language3">
+            <header>Deutsch</header>
+            <p>German</p>
+            <a href="ue_german_64.exe">Download 64x bit</a>
+        </div>
+        <div class="language4">
+            <header>Italiano</header>
+            <p>Italian</p>
+            <a href="ue_italian_64.exe">Download 64x bit</a>
+        </div>
+        <div class="language5">
+            <header>Brazilian Portuguese</header>
+            <p>Portuguese</p>
+            <a href="ue_portuguese_64.exe">Download 64x bit</a>
+        </div>
+        <div class="language6">
+            <header>Español</header>
+            <p>Spanish</p>
+            <a href="ue_spanish_64.exe">Download 64x bit</a>
+        </div>
+      </div>
+  </body>
+</html>

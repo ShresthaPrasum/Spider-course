@@ -1,0 +1,17 @@
+body{
+    background-color: rgb(92, 147, 147);text-align: center;background-image: url(image.jpg);
+}
+input{
+    background-color: rgb(43, 26, 26);text-align: center;
+}
+::placeholder{
+    -webkit-text-fill-color: rgb(251, 0, 255); text-align: center;
+}
+text{
+    background-color: aqua; text-align: center;
+}
+label{
+    -webkit-text-fill-color: rgb(0, 238, 243);text-align: center;
+}
+h1{
+    text-align: center; -webkit-text-fill-color: aqua;font-size: 50px;

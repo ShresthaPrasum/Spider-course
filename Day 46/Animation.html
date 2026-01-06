@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Animations</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            font-family: Georgia, 'Times New Roman', Times, serif
+        }
+        .container{
+            background-color: rgb(9, 106, 106);
+            height: 100vh;
+            width: 100%;
+        }
+
+        .box{
+            width: 100px;
+            height: 45px; 
+            animation-name: prasumdonkoanimation; 
+            animation-duration: 4s;
+            animation-iteration-count: infinite;
+        }
+        @keyframes prasumdonkoanimation{
+            from{
+                transform: translateX(800px) translateY(0) scaleX(1) scaleY(1);
+            }
+            to{
+                transform: translateX(800px) translateY(500px) scaleX(5) scaleY(5);
+                color: white;
+            }
+        }
+        @keyframes prasum2{
+            0%{
+
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            Hello World!
+        </div>
+        <div class="prasum2">
+            
+        </div>
+    </div>
+</body>
+</html>

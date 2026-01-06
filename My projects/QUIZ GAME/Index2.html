@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Mama Pro🧠</title>
+    <!-- Canvas Confetti Library for celebration effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Bubblegum+Sans&display=swap");
+
+      :root {
+        --color-bg-1: #4a00e0;
+        --color-bg-2: #8e2de2;
+        --color-primary: #ffc300;
+        --color-secondary: #00c6ff;
+        --color-text: #ffffff;
+        --color-correct: #4caf50;
+        --color-wrong: #f44336;
+        --color-team-a: #ff5733;
+        --color-team-b: #338dff;
+        --color-team-c: #33ff57;
+        --color-container-bg: rgba(0, 0, 0, 0.4);
+        --color-modal-overlay: rgba(0, 0, 0, 0.8);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--color-bg-1),
+          var(--color-bg-2)
+        );
+        background-size: 200% 200%;
+        animation: gradient-animation 15s ease infinite;
+        color: var(--color-text);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        box-sizing: border-box;
+      }
+
+      @keyframes gradient-animation {
+        0% {
+          background-position: 0% 50%;
+        }
+
+        50% {
+          background-position: 100% 50%;
+        }
+
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      #particle-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .section {
+        width: 100%;
+        max-width: 1000px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .container {
+        background: var(--color-container-bg);
+        border-radius: 25px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        position: relative;
+      }
+
+      .container.fade-out {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      .container.fade-in {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Bubblegum Sans", cursive;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(2.5rem, 8vw, 4.5rem);
+        color: var(--color-primary);
+      }
+
+      h2 {
+        font-size: clamp(1.8rem, 6vw, 2.8rem);
+        color: var(--color-secondary);
+        margin-bottom: 15px;
+      }
+
+      h3 {
+        font-size: clamp(1.2rem, 4vw, 1.5rem);
+        color: var(--color-primary);
+        min-height: 50px;
+        font-weight: 700;
+        margin: 15px 0;
+      }
+
+      p {
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        line-height: 1.6;
+      }
+
+      .btn {
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-size: clamp(0.9rem, 3vw, 1.1rem);
+        padding: 12px 25px;
+        border-radius: 50px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--color-text);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background-color: var(--color-secondary);
+        color: #000;
+      }
+
+      .btn:hover:not(:disabled) {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      }
+
+      .btn:disabled {
+        background-color: #777;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      /* --- Brand Footer --- */
+      .brand-footer {
+        position: absolute;
+        bottom: 10px;
+        right: 20px;
+        font-family: "Bubblegum Sans", cursive;
+        font-size: 1rem;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      /* --- Intro Screen --- */
+      #intro-screen h1 {
+        animation: pulse 2s infinite;
+      }
+
+      /* --- Controls & Toggles --- */
+      .top-controls {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+      }
+
+      .control-btn-icon {
+        font-size: 1.8rem;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: white;
+        opacity: 0.7;
+        transition: opacity 0.3s, transform 0.3s;
+        padding: 0;
+        line-height: 1;
+      }
+
+      .control-btn-icon:hover {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+
+      /* --- Setup Screen --- */
+      .setup-group {
+        margin: 25px 0;
+      }
+
+      .setup-options {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .setup-btn {
+        background-color: var(--color-secondary);
+      }
+
+      .setup-btn.active {
+        box-shadow: 0 0 20px var(--color-primary);
+        transform: scale(1.1);
+      }
+
+      #custom-q-input {
+        font-family: "Poppins", sans-serif;
+        font-size: 1rem;
+        width: 80px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 2px solid var(--color-secondary);
+        background: rgba(0, 0, 0, 0.3);
+        color: white;
+        text-align: center;
+      }
+
+      /* --- Game Board & Teams --- */
+      .score-board {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .score {
+        padding: 10px 15px;
+        border-radius: 10px;
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .score.highlight-turn {
+        transform: scale(1.15);
+        box-shadow: 0 0 15px currentColor;
+      }
+
+      .team-name {
+        cursor: pointer;
+        border-bottom: 2px dashed rgba(255, 255, 255, 0.5);
+        padding: 0 5px;
+      }
+
+      .team-name:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.1);
+        border-bottom: 2px solid var(--color-primary);
+      }
+
+      .score-controls {
+        display: flex;
+        gap: 5px;
+        margin-left: 10px;
+      }
+
+      .score-btn {
+        background: rgba(255, 255, 255, 0.3);
+        border: none;
+        color: white;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      #score-a {
+        background-color: var(--color-team-a);
+      }
+
+      #score-b {
+        background-color: var(--color-team-b);
+      }
+
+      #score-c {
+        background-color: var(--color-team-c);
+      }
+
+      /* --- Question Picker & Area --- */
+      #question-picker {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 10px;
+        margin-top: 20px;
+        transition: opacity 0.3s ease;
+      }
+
+      .question-box {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 2px solid var(--color-secondary);
+        aspect-ratio: 1 / 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+      }
+
+      .question-box:hover:not(.used) {
+        background-color: var(--color-secondary);
+        color: #000;
+        transform: scale(1.1);
+      }
+
+      .question-box.used {
+        background-color: rgba(0, 0, 0, 0.4);
+        border-color: #555;
+        color: #888;
+        cursor: not-allowed;
+        text-decoration: line-through;
+      }
+
+      #question-picker.disabled .question-box:not(.used) {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      #question-area {
+        margin-top: 20px;
+        padding: 25px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #timer-text {
+        font-family: "Bubblegum Sans", cursive;
+        font-size: 3.5rem;
+        color: var(--color-primary);
+        transition: color 0.3s ease;
+      }
+
+      #timer-text.low-time {
+        color: var(--color-wrong);
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.1);
+        }
+
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      #timer-bar-container {
+        width: 210px;
+        max-width: 400px;
+        height: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        margin: 10px auto 0;
+        overflow: hidden;
+      }
+
+      #timer-bar {
+        width: 100%;
+        height: 100%;
+        background: var(--color-primary);
+        border-radius: 5px;
+        transition: width 0.1s linear, background-color 0.5s;
+      }
+
+      #timer-bar.low-time {
+        background-color: var(--color-wrong);
+      }
+
+      #question-text {
+        font-size: clamp(1.3rem, 4vw, 1.8rem);
+        font-weight: 700;
+        line-height: 1.5;
+        margin: 15px 0;
+      }
+
+      #question-controls {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .control-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 10px;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* --- Modal & End Screen --- */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--color-modal-overlay);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+
+      .modal-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: linear-gradient(
+          135deg,
+          var(--color-bg-1),
+          var(--color-bg-2)
+        );
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 90%;
+        width: 600px;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        border: 3px solid var(--color-primary);
+        transform: scale(0.7);
+        transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      }
+
+      .modal-overlay.visible .modal-content {
+        transform: scale(1);
+      }
+
+      #answer-text {
+        font-size: clamp(1.5rem, 5vw, 2.2rem);
+        color: var(--color-primary);
+        font-weight: 700;
+        line-height: 1.4;
+      }
+
+      #scoring-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      #final-scores {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 30px 0;
+        align-items: center;
+      }
+
+      .final-score {
+        font-size: clamp(1.2rem, 5vw, 1.8rem);
+        padding: 15px 25px;
+        border-radius: 10px;
+        font-weight: 700;
+        width: 80%;
+        max-width: 400px;
+      }
+
+      .brand-foot {
+        font-family: "Bubblegum Sans", cursive;
+        opacity: 0.5;
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 3px 7px;
+        border-radius: 5px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="brand-foot">Made by Prasum Shrestha</div>
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- =========== INTRO SCREEN =========== -->
+    <div id="intro-screen" class="section">
+      <div class="container">
+        <h1>Quiz Mama Pro</h1>
+        <p>The Ultimate Quiz Competition Experience</p>
+        <button id="enter-setup-btn" class="btn">Let's Begin!</button>
+      </div>
+    </div>
+
+    <!-- =========== SETUP SCREEN =========== -->
+    <div id="setup-screen" class="section hidden">
+      <div class="container">
+        <h1>Game Setup</h1>
+        <div class="setup-group">
+          <h2>Choose a Category</h2>
+          <div id="category-options" class="setup-options">
+            <button class="btn setup-btn" data-category="Mix">
+              Random Mix
+            </button>
+            <button class="btn setup-btn" data-category="IQ">IQ & Logic</button>
+            <button class="btn setup-btn" data-category="Science">
+              Science
+            </button>
+            <button class="btn setup-btn" data-category="Sports">Sports</button>
+            <button class="btn setup-btn" data-category="Programming">
+              Programming
+            </button>
+            <button class="btn setup-btn" data-category="Maths">Maths</button>
+          </div>
+        </div>
+        <div class="setup-group">
+          <h2>How many questions?</h2>
+          <div id="count-options" class="setup-options">
+            <button class="btn setup-btn" data-count="10">10</button>
+            <button class="btn setup-btn" data-count="20">20</button>
+            <button class="btn setup-btn" data-count="30">30</button>
+            <input
+              type="number"
+              id="custom-q-input"
+              placeholder="Custom"
+              min="1"
+              max="139"
+              class="setup-btn"
+            />
+          </div>
+        </div>
+        <button
+          id="finish-setup-btn"
+          class="btn"
+          style="margin-top: 20px; background-color: var(--color-correct)"
+          disabled
+        >
+          Let's Play!
+        </button>
+        <div class="brand-footer">Quiz Mama🧠</div>
+      </div>
+    </div>
+
+    <!-- =========== MAIN GAME BOARD =========== -->
+    <div id="game-board" class="section hidden">
+      <div class="container">
+        <div class="top-controls">
+          <button
+            id="mute-toggle"
+            class="control-btn-icon"
+            title="Mute/Unmute Sounds"
+          >
+            🔊
+          </button>
+          <button
+            id="end-quiz-btn"
+            class="control-btn-icon"
+            title="End Quiz Early"
+          >
+            🛑
+          </button>
+        </div>
+        <div class="score-board">
+          <div id="score-a" class="score">
+            <span
+              class="team-name"
+              id="team-name-a"
+              contenteditable="true"
+              data-team="A"
+              >Team A</span
+            >: <span id="score-val-a">0</span>
+            <div class="score-controls">
+              <button class="score-btn" data-team="A" data-change="1">+</button
+              ><button class="score-btn" data-team="A" data-change="-1">
+                -
+              </button>
+            </div>
+          </div>
+          <div id="score-b" class="score">
+            <span
+              class="team-name"
+              id="team-name-b"
+              contenteditable="true"
+              data-team="B"
+              >Team B</span
+            >: <span id="score-val-b">0</span>
+            <div class="score-controls">
+              <button class="score-btn" data-team="B" data-change="1">+</button
+              ><button class="score-btn" data-team="B" data-change="-1">
+                -
+              </button>
+            </div>
+          </div>
+          <div id="score-c" class="score">
+            <span
+              class="team-name"
+              id="team-name-c"
+              contenteditable="true"
+              data-team="C"
+              >Team C</span
+            >: <span id="score-val-c">0</span>
+            <div class="score-controls">
+              <button class="score-btn" data-team="C" data-change="1">+</button
+              ><button class="score-btn" data-team="C" data-change="-1">
+                -
+              </button>
+            </div>
+          </div>
+        </div>
+        <h3 id="game-status-text"></h3>
+        <div id="question-picker"></div>
+        <div id="question-area" class="hidden">
+          <div id="timer-container">
+            <div id="timer-text">--</div>
+            <div id="timer-bar-container">
+              <div id="timer-bar"></div>
+            </div>
+          </div>
+          <p id="question-text"></p>
+          <div id="action-wrapper"></div>
+        </div>
+        <div class="brand-footer">Quiz Mama🧠</div>
+      </div>
+    </div>
+
+    <!-- =========== ANSWER MODAL =========== -->
+    <div id="answer-modal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>The Answer Is...</h2>
+        <p id="answer-text"></p>
+        <div id="scoring-buttons" class="hidden">
+          <button
+            id="was-correct-btn"
+            class="btn"
+            style="background-color: var(--color-correct)"
+          >
+            ✅ Correct
+          </button>
+          <button
+            id="was-wrong-btn"
+            class="btn"
+            style="background-color: var(--color-wrong)"
+          >
+            ❌ Wrong
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========== END SCREEN =========== -->
+    <div id="end-screen" class="section hidden">
+      <div class="container">
+        <h1 id="winner-text"></h1>
+        <h2>Final Scores:</h2>
+        <div id="final-scores">
+          <div id="final-score-a" class="final-score">Team A: 0</div>
+          <div id="final-score-b" class="final-score">Team B: 0</div>
+          <div id="final-score-c" class="final-score">Team C: 0</div>
+        </div>
+        <button id="restart-btn" class="btn">Play Again</button>
+        <div class="brand-footer">Quiz Mama🧠</div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const allQuestions = [
+          // 1-20: Hard IQ / Logical Reasoning
+          {
+            category: "IQ",
+            question:
+              "What is the next number in the sequence: 2, 12, 30, 56, 90, ...?",
+            answer:
+              "132. The pattern is n * (n+1), where n increments by 2 (1*2, 3*4, 5*6, 7*8, 9*10, 11*12).",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question: "If 'CAT' = 24, and 'DOG' = 26, what does 'FOX' equal?",
+            answer:
+              "45. The value is the sum of the alphabetical positions of the letters (F=6, O=15, X=24).",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question:
+              "A large cube is painted on all sides and then cut into 64 smaller, equal cubes. How many of these smaller cubes have exactly two faces painted?",
+            answer:
+              "24. A 4x4x4 cube has 12 edges, and each edge has 2 cubes with two faces painted (12 * 2 = 24).",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question: "Complete the sequence: 1, 8, 27, 64, __, 216.",
+            answer:
+              "125. These are the cubes of consecutive integers (1³, 2³, 3³, 4³, 5³, 6³).",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question:
+              "What is the next number in the series: 7, 14, 28, 56, 112, ...?",
+            answer: "224. Each number is double the previous one.",
+            difficulty: "medium",
+          },
+          {
+            category: "IQ",
+            question:
+              "At 2:20, what is the smaller angle between the hour and minute hands of a clock?",
+            answer:
+              "50 degrees. The minute hand is at 120°. The hour hand is at 70° (2 * 30 + 20 * 0.5). The difference is 50°.",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question: "If BOOK = 43 and PEN = 35, what is the logic?",
+            answer:
+              "Sum of alphabetical positions. B(2)+O(15)+O(15)+K(11)=43. P(16)+E(5)+N(14)=35.",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question: "Find the next number: 5, 11, 23, 47, 95, ...?",
+            answer:
+              "191. The pattern is to multiply by 2 and then add 1 to the result.",
+            difficulty: "medium",
+          },
+          {
+            category: "IQ",
+            question:
+              "A cube has 12 edges. If each edge length 'L' increases by 1 cm, what is the increase in total surface area?",
+            answer:
+              "The increase is (12L + 6) cm². New area 6(L+1)² minus old area 6L².",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question:
+              "John is three times as old as Mary. In five years, John will be twice as old as Mary. What are their current ages?",
+            answer: "John is 15, Mary is 5. Equations: J=3M and J+5 = 2(M+5).",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question: "What comes next in the sequence: 3, 5, 9, 17, 33, ...?",
+            answer:
+              "65. The difference between the numbers doubles each time (2, 4, 8, 16, so next is 32).",
+            difficulty: "medium",
+          },
+          {
+            category: "IQ",
+            question:
+              "If the day after tomorrow is two days before Thursday, what day is it today?",
+            answer:
+              "Sunday. Two days before Thursday is Tuesday. If the day after tomorrow is Tuesday, then today must be Sunday.",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question: "Find the next letter in the series: A, C, F, J, O, ...?",
+            answer:
+              "U. The gap between letters increases by one each time (+2, +3, +4, +5, so next is +6).",
+            difficulty: "medium",
+          },
+          {
+            category: "IQ",
+            question:
+              "What is the next number in this sequence: 2, 6, 12, 20, 30, 42, ...?",
+            answer:
+              "56. The pattern is n * (n+1), where n increments by 1 (1*2, 2*3, 3*4, 4*5, 5*6, 6*7, 7*8).",
+            difficulty: "medium",
+          },
+          {
+            category: "IQ",
+            question:
+              "A man says 'I always lie'. Is he telling the truth or lying?",
+            answer:
+              "It’s a paradox. If he tells the truth, then he is lying, and if he lies, then he is telling the truth.",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question: "What disappears the moment you say its name?",
+            answer: "Silence.",
+            difficulty: "medium",
+          },
+          {
+            category: "IQ",
+            question:
+              "The more you take, the more you leave behind. What is it?",
+            answer: "Footsteps.",
+            difficulty: "medium",
+          },
+          {
+            category: "IQ",
+            question:
+              "If a tree falls in a forest and no one is around to hear it, does it make a sound?",
+            answer:
+              "It depends on perspective: physically it produces vibrations (sound), but perception requires an observer.",
+            difficulty: "hard",
+          },
+
+          {
+            category: "IQ",
+            question:
+              "If you know someone will make a mistake, are they still responsible for it?",
+            answer:
+              "This explores free will vs determinism: foreknowledge does not remove responsibility.",
+            difficulty: "hard",
+          },
+
+          {
+            category: "IQ",
+            question:
+              "If you replace a ship’s parts one by one, is it still the same ship?",
+            answer:
+              "This is the Ship of Theseus paradox; identity may be continuous or dependent on parts.",
+            difficulty: "hard",
+          },
+
+          {
+            category: "IQ",
+            question: "Can one ever truly know themselves?",
+            answer:
+              "Self-knowledge is infinite; we can know parts of ourselves, but full understanding may be impossible.",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question:
+              "If knowledge is power, and ignorance is bliss, which is more valuable?",
+            answer:
+              "Depends on values. Knowledge gives control, bliss gives peace.",
+            difficulty: "hard",
+          },
+          {
+            category: "IQ",
+            question: "What is always coming but never arrives?",
+            answer: "Tomorrow.",
+            difficulty: "easy",
+          },
+          {
+            category: "IQ",
+            question: "What breaks without being touched?",
+            answer: "A promise.",
+            difficulty: "medium",
+          },
+
+          // 21-40: Maths
+          {
+            category: "Maths",
+            question: "Find the values of x if x² – 5x + 6 = 0.",
+            answer: "x = 2 or x = 3. The equation factors to (x-2)(x-3) = 0.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question:
+              "What is the LCM (Least Common Multiple) of 12, 18, and 24?",
+            answer:
+              "72. It's the smallest number that is a multiple of all three.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question:
+              "What is the HCF (Highest Common Factor) or GCD of 48, 72, and 108?",
+            answer:
+              "12. It's the largest number that divides all three without a remainder.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question:
+              "If a² – b² = 45 and a – b = 3, what is the value of a + b?",
+            answer:
+              "15. Since a² – b² = (a - b)(a + b), we have 45 = 3 * (a + b).",
+            difficulty: "hard",
+          },
+          {
+            category: "Maths",
+            question:
+              "Find the approximate area of a triangle with sides 7 cm, 8 cm, and 9 cm.",
+            answer:
+              "Approximately 26.83 cm². This is solved using Heron's formula for the area of a triangle.",
+            difficulty: "hard",
+          },
+          {
+            category: "Maths",
+            question:
+              "Find the next number in the pattern: 2, 6, 12, 20, 30, ...?",
+            answer:
+              "42. The difference increases by 2 each time (+4, +6, +8, +10, so next is +12).",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question:
+              "Calculate the volume of a cylinder with a radius of 3 cm and a height of 10 cm.",
+            answer: "Approximately 282.74 cm³. The formula is V = π × r² × h.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "Simplify the algebraic expression: (x² – 9) / (x – 3).",
+            answer:
+              "x + 3. The numerator is a difference of squares, which factors to (x-3)(x+3).",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "Solve the quadratic equation: x² + 7x + 12 = 0.",
+            answer: "x = -3 or x = -4. The equation factors to (x+3)(x+4)=0.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question:
+              "What is the sum of the first 20 natural numbers (1+2+...+20)?",
+            answer: "210. Using the formula n(n+1)/2, where n=20.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "Solve for x: (2/3)x – 5 = 7.",
+            answer: "x = 18. First, add 5 to both sides, then multiply by 3/2.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "If A = 3 and B = 4, what is the value of √(A² + B²)?",
+            answer:
+              "5. This is the Pythagorean theorem (3² + 4² = 9 + 16 = 25, and √25 = 5).",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question:
+              "The average of five numbers is 17. Four of the numbers are 12, 15, 18, and 20. What is the fifth number?",
+            answer:
+              "20. The total sum must be 17*5=85. The sum of the given four numbers is 65. The missing number is 85-65.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "What is 5 factorial, which is written as 5!?",
+            answer: "120. It is calculated by multiplying 5 × 4 × 3 × 2 × 1.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question:
+              "In a room of 20 people, how many total handshakes occur if everyone shakes hands with everyone else once?",
+            answer: "190. The formula for this is n(n-1)/2, so (20 * 19) / 2.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "Solve for x: 2x + 7 = 15.",
+            answer: "x = 4.",
+            difficulty: "easy",
+          },
+          {
+            category: "Maths",
+            question: "What is the square root of 144?",
+            answer: "12.",
+            difficulty: "easy",
+          },
+          {
+            category: "Maths",
+            question: "Simplify: (a+b)².",
+            answer: "a² + 2ab + b².",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "If sin θ = 1, what is θ?",
+            answer: "90° (or π/2 radians).",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "What is tan 45°?",
+            answer: "1.",
+            difficulty: "easy",
+          },
+          {
+            category: "Maths",
+            question: "Find the value of cos 60°.",
+            answer: "0.5.",
+            difficulty: "easy",
+          },
+          {
+            category: "Maths",
+            question: "If sin²θ + cos²θ = ?",
+            answer: "1 (Pythagorean identity).",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "Evaluate: sin 30° × cos 60°.",
+            answer: "0.25.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "Find the perimeter of a circle with radius 7 cm.",
+            answer: "44 cm (approx). Using 2πr.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question:
+              "If a right triangle has legs 3 and 4, what is the hypotenuse?",
+            answer: "5 (by Pythagoras).",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "Find sin(90° - θ).",
+            answer: "cos θ.",
+            difficulty: "medium",
+          },
+          {
+            category: "Maths",
+            question: "What is the value of tan 0°?",
+            answer: "0.",
+            difficulty: "easy",
+          },
+
+          // 41-60: Science
+          {
+            category: "Science",
+            question:
+              "What is the formula for Force according to Newton's Second Law of Motion?",
+            answer: "F = m × a (Force equals mass times acceleration).",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question:
+              "What is the formula representing Ohm's Law in electricity?",
+            answer: "V = I × R (Voltage equals Current times Resistance).",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question:
+              "On the periodic table, what is the collective name for the group of elements in the far-right column (Group 18)?",
+            answer:
+              "The Noble Gases. They are known for being chemically inert or unreactive.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question: "What is the key difference between speed and velocity?",
+            answer:
+              "Velocity is a vector quantity, having both magnitude (speed) and direction. Speed is a scalar quantity (magnitude only).",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question:
+              "Give an example of an alkali metal from the first group of the periodic table.",
+            answer:
+              "Sodium (Na) or Potassium (K) are common and highly reactive examples.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question:
+              "In a distance-time graph representing an object's motion, what does the slope of the line indicate?",
+            answer:
+              "The speed of the object. A steeper slope means a higher speed.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question:
+              "What is the balanced chemical equation for photosynthesis?",
+            answer:
+              "6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂. This represents Carbon Dioxide and Water being converted into Glucose and Oxygen.",
+            difficulty: "hard",
+          },
+          {
+            category: "Science",
+            question: "What is the largest organ in the human body?",
+            answer: "The Skin. It acts as a protective barrier for the body.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question: "What is the approximate speed of light in a vacuum?",
+            answer:
+              "Approximately 300,000 kilometers per second (or 186,000 miles per second).",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question:
+              "On the periodic table, what element is represented by the symbol 'Fe'?",
+            answer: "Iron. The symbol comes from its Latin name, 'Ferrum'.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question: "What is the speed of sound in air at room temperature?",
+            answer: "Approximately 343 m/s.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question: "Which gas is most abundant in Earth’s atmosphere?",
+            answer: "Nitrogen (~78%).",
+            difficulty: "easy",
+          },
+          {
+            category: "Science",
+            question: "What is the unit of electric charge?",
+            answer: "Coulomb (C).",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question:
+              "Which vitamin is produced when our skin is exposed to sunlight?",
+            answer: "Vitamin D.",
+            difficulty: "easy",
+          },
+          {
+            category: "Science",
+            question: "What is the powerhouse of the cell?",
+            answer: "Mitochondria.",
+            difficulty: "easy",
+          },
+          {
+            category: "Science",
+            question:
+              "Which law states that energy cannot be created or destroyed?",
+            answer: "Law of Conservation of Energy.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question: "What is the difference between mitosis and meiosis?",
+            answer:
+              "Mitosis creates identical cells, meiosis creates gametes with half chromosomes.",
+            difficulty: "hard",
+          },
+          {
+            category: "Science",
+            question:
+              "What is the freezing point of pure water at sea level in fahrenheit?",
+            answer: "32°F.",
+            difficulty: "easy",
+          },
+          {
+            category: "Science",
+            question: "What is the SI unit of frequency?",
+            answer: "Hertz (Hz).",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question: "Which blood cells help fight infection?",
+            answer: "White blood cells (WBC).",
+            difficulty: "medium",
+          },
+
+          // Astronomy
+          {
+            category: "Science",
+            question: "What is the largest planet in our solar system?",
+            answer: "Jupiter.",
+            difficulty: "easy",
+          },
+
+          {
+            category: "Science",
+            question: "What is a black hole?",
+            answer:
+              "A region in space with gravity so strong that nothing, not even light, can escape.",
+            difficulty: "hard",
+          },
+          {
+            category: "Science",
+            question: "What is a supernova?",
+            answer: "A massive explosion when a star dies.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question: "What causes seasons on Earth?",
+            answer: "The tilt of Earth’s axis as it orbits the Sun.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question:
+              "What is the name of the first artificial satellite launched into space?",
+            answer: "Sputnik 1, launched by the Soviet Union in 1957.",
+            difficulty: "medium",
+          },
+          {
+            category: "Science",
+            question: "What is the approximate age of the universe?",
+            answer: "Around 13.8 billion years.",
+            difficulty: "hard",
+          },
+          {
+            category: "Science",
+            question: "What are exoplanets?",
+            answer: "Planets outside our solar system.",
+            difficulty: "medium",
+          },
+
+          // 61-90: Programming (unchanged)
+          {
+            category: "Programming",
+            question:
+              "In HTML, which tag is used for the most important heading?",
+            answer:
+              "<h1>. Headings range from <h1> (most important) to <h6> (least important).",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "In CSS, how do you select an element with id 'header'?",
+            answer: "#header. The '#' symbol is used for ID selectors.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question:
+              "What JavaScript keyword is used to declare a variable that cannot be reassigned?",
+            answer: "const. It creates a read-only reference to a value.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "Which HTML element is used to create a hyperlink?",
+            answer: "The <a> tag, also known as the anchor tag.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What is the CSS property for setting the text color?",
+            answer: "color. For example, 'color: blue;'.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "Which HTML tag is used to embed an image?",
+            answer:
+              "The <img> tag. It requires the 'src' attribute for the image source.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question:
+              "What method in JavaScript adds an element to the end of an array?",
+            answer: "The .push() method.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What does HTML stand for?",
+            answer:
+              "HyperText Markup Language. It's the standard for creating web pages.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What are the two main types of lists in HTML?",
+            answer: "Ordered lists (<ol>) and unordered lists (<ul>).",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "Which CSS property centers text horizontally?",
+            answer: "text-align: center;",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What syntax is used for printing 'Hello World' in C?",
+            answer: 'printf("Hello World");',
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What is the data type for whole numbers in C?",
+            answer: "int (integer).",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What is the operator for finding the remainder in C?",
+            answer: "The modulo operator (%).",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "Which keyword defines a constant in C?",
+            answer: "const.",
+            difficulty: "medium",
+          },
+          {
+            category: "Programming",
+            question:
+              "What loop can be used to print numbers from 1 to 10 in C?",
+            answer: "A 'for' loop: for(int i=1; i<=10; i++)",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "Which function takes user input in C?",
+            answer: "scanf().",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What is the basic syntax for an if statement in C?",
+            answer: "if (condition) { /* code */ }",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What's the difference between ++i and i++ in C?",
+            answer:
+              "++i (pre-increment) increments the value then returns it. i++ (post-increment) returns the value then increments it.",
+            difficulty: "hard",
+          },
+          {
+            category: "Programming",
+            question: "How do you declare an integer array of size 5 in C?",
+            answer: "int arr[5];",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What is the difference between = and == in C?",
+            answer: "= is for assignment, while == is for comparison.",
+            difficulty: "medium",
+          },
+          {
+            category: "Programming",
+            question: "What does API stand for?",
+            answer:
+              "Application Programming Interface. It's a way for two or more computer programs to communicate with each other.",
+            difficulty: "medium",
+          },
+          {
+            category: "Programming",
+            question: "What does CSS stand for?",
+            answer: "Cascading Style Sheets. It's used for styling web pages.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What is Git used for in software development?",
+            answer:
+              "Version control. It tracks changes to code and helps teams collaborate.",
+            difficulty: "medium",
+          },
+          {
+            category: "Programming",
+            question: "Difference between 'let' and 'const' in JavaScript?",
+            answer:
+              "'let' allows reassignment, 'const' does not (for the variable reference).",
+            difficulty: "medium",
+          },
+          {
+            category: "Programming",
+            question: "What does URL stand for?",
+            answer:
+              "Uniform Resource Locator. It's the address of a resource on the web.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What is a 'bug' in programming?",
+            answer:
+              "An error or flaw in the code that causes unexpected results.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What does HTML stand for?",
+            answer:
+              "HyperText Markup Language. It structures content on the web.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "What is an algorithm?",
+            answer: "A set of step-by-step instructions to solve a problem.",
+            difficulty: "easy",
+          },
+          {
+            category: "Programming",
+            question: "Which company developed JavaScript?",
+            answer: "Netscape. It was created by Brendan Eich.",
+            difficulty: "medium",
+          },
+          {
+            category: "Programming",
+            question:
+              "Difference between an Array and an Object in JavaScript?",
+            answer:
+              "An Array is an ordered list of items with numbered indexes. An Object is an unordered collection of key-value pairs.",
+            difficulty: "medium",
+          },
+          // ... keep all your programming questions as before
+
+          // 91-110: Sports
+          {
+            category: "Sports",
+            question: "What does LBW stand for in cricket?",
+            answer: "Leg Before Wicket. A method of dismissal.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "What is the premier trophy for the men's 50-over Cricket World Cup?",
+            answer: "The ICC Cricket World Cup Trophy.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "Which country won the first Men's Cricket World Cup in 1975?",
+            answer: "West Indies. They beat Australia in the final.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question: "Where are the 'slips' positioned in cricket?",
+            answer:
+              "They are fielding positions behind the batsman on the off side.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "Who holds the record for the fastest century in men's ODI cricket?",
+            answer: "AB de Villiers (South Africa), in 31 balls.",
+            difficulty: "hard",
+          },
+          {
+            category: "Sports",
+            question: "When is a goal kick awarded in football?",
+            answer:
+              "When the attacking team last touches the ball before it crosses the goal line.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question: "What is the 'offside' rule in football?",
+            answer:
+              "A player is offside if they are nearer to the opponent's goal line than both the ball and the second-to-last opponent when the ball is passed to them.",
+            difficulty: "hard",
+          },
+          {
+            category: "Sports",
+            question:
+              "What is the difference between a free kick and a penalty kick?",
+            answer:
+              "A penalty kick is a specific type of free kick taken from the penalty spot, 12 yards from the goal, with only the goalkeeper defending.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "How many substitutions are typically allowed in a standard football match now?",
+            answer:
+              "Five substitutions. This rule was changed from the traditional three.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "Which country has won the most FIFA World Cups in football?",
+            answer: "Brazil. They have won the tournament five times.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "What is the name of the famous 24-hour endurance car race held annually in France?",
+            answer:
+              "The 24 Hours of Le Mans. It's one of the world's oldest and most prestigious auto races.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question: "Which athlete is famously known as 'The Flying Sikh'?",
+            answer: "Milkha Singh. An iconic Indian track and field sprinter.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "In which city were the first modern Olympic Games held in 1896?",
+            answer: "Athens, Greece.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "In cricket, what is the term for a bowler taking three wickets on three consecutive deliveries?",
+            answer: "A hat-trick.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "How many points are needed to win a standard 'game' in tennis (assuming no deuce)?",
+            answer:
+              "Four points. The scores are 15, 30, 40, and the game-winning point.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "Which Formula 1 driver is tied with Michael Schumacher for the most World Championships?",
+            answer: "Lewis Hamilton. Both drivers have won seven world titles.",
+            difficulty: "hard",
+          },
+          {
+            category: "Sports",
+            question: "Who is the King of Cricket?",
+            answer: "Biraj Kohli.",
+            difficulty: "easy",
+          },
+          {
+            category: "Sports",
+            question: "Who is known as the 'God of Cricket'?",
+            answer: "Sachin Tendulkar.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "How many players are there in a football team on the field?",
+            answer: "11.",
+            difficulty: "easy",
+          },
+          {
+            category: "Sports",
+            question: "Which country hosted the FIFA World Cup 2022?",
+            answer: "Qatar.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question: "Which cricketer is called 'Universe Boss'?",
+            answer: "Chris Gayle.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "In basketball, how many points is a shot made from beyond the arc worth?",
+            answer: "3 points.",
+            difficulty: "easy",
+          },
+          {
+            category: "Sports",
+            question: "Who won the Ballon d'Or 2023?",
+            answer: "Lionel Messi.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question: "Which football club is also called 'The Red Devils'?",
+            answer: "Manchester United.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question: "Which country invented table tennis?",
+            answer: "England.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question: "In cricket, how many overs are in a standard ODI match?",
+            answer: "50 overs per side.",
+            difficulty: "easy",
+          },
+          {
+            category: "Sports",
+            question: "In tennis, what is the term for 0 points?",
+            answer: "Love.",
+            difficulty: "easy",
+          },
+          {
+            category: "Sports",
+            question: "Which athlete is known as the fastest man alive?",
+            answer: "Usain Bolt.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question:
+              "In football, what happens if a match is tied after extra time in a knockout tournament?",
+            answer: "Penalty shootout.",
+            difficulty: "medium",
+          },
+          {
+            category: "Sports",
+            question: "Which country has won the most Olympic gold medals?",
+            answer: "USA.",
+            difficulty: "hard",
+          },
+        ];
+
+        // --- GAME STATE ---
+        let gameState = {};
+
+        // --- DOM Elements ---
+        const introScreen = document.getElementById("intro-screen");
+        const setupScreen = document.getElementById("setup-screen");
+        const gameBoard = document.getElementById("game-board");
+        const endScreen = document.getElementById("end-screen");
+
+        const categoryOptions = document.getElementById("category-options");
+        const countOptions = document.getElementById("count-options");
+        const customQInput = document.getElementById("custom-q-input");
+        const finishSetupBtn = document.getElementById("finish-setup-btn");
+
+        const muteToggle = document.getElementById("mute-toggle");
+        const endQuizBtn = document.getElementById("end-quiz-btn");
+
+        const scoreBoard = document.querySelector(".score-board");
+        const scoreDisplays = {
+          A: document.getElementById("score-val-a"),
+          B: document.getElementById("score-val-b"),
+          C: document.getElementById("score-val-c"),
+        };
+        const scoreBoxes = {
+          A: document.getElementById("score-a"),
+          B: document.getElementById("score-b"),
+          C: document.getElementById("score-c"),
+        };
+        const teamNameSpans = document.querySelectorAll(".team-name");
+
+        const gameStatusText = document.getElementById("game-status-text");
+        const questionPicker = document.getElementById("question-picker");
+        const questionArea = document.getElementById("question-area");
+        const timerText = document.getElementById("timer-text");
+        const timerBar = document.getElementById("timer-bar");
+        const questionText = document.getElementById("question-text");
+        const actionWrapper = document.getElementById("action-wrapper");
+
+        const answerModal = document.getElementById("answer-modal");
+        const answerText = document.getElementById("answer-text");
+        const scoringButtons = document.getElementById("scoring-buttons");
+        const wasCorrectBtn = document.getElementById("was-correct-btn");
+        const wasWrongBtn = document.getElementById("was-wrong-btn");
+
+        const winnerText = document.getElementById("winner-text");
+        const finalScoreDisplays = {
+          A: document.getElementById("final-score-a"),
+          B: document.getElementById("final-score-b"),
+          C: document.getElementById("final-score-c"),
+        };
+        const restartBtn = document.getElementById("restart-btn");
+
+        // --- Web Audio API for Sound Effects ---
+        let audioCtx;
+        const sounds = {};
+
+        function createSounds() {
+          if (audioCtx) return;
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+          sounds.click = createSound(200, 0.1, "square", 0.1);
+          sounds.correct = createSound(523.25, 0.2, "sine", 0.2); // C5
+          sounds.wrong = createSound(164.81, 0.3, "sawtooth", 0.2); // E3
+          sounds.victory = createVictoryFanfare();
+        }
+
+        function createSound(freq, duration, type, volume = 0.1) {
+          return {
+            play: () => {
+              if (!audioCtx || audioCtx.state === "suspended") {
+                audioCtx.resume();
+              }
+              const oscillator = audioCtx.createOscillator();
+              const gainNode = audioCtx.createGain();
+              oscillator.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
+
+              oscillator.type = type;
+              oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+              gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+              gainNode.gain.exponentialRampToValueAtTime(
+                0.0001,
+                audioCtx.currentTime + duration
+              );
+
+              oscillator.start(audioCtx.currentTime);
+              oscillator.stop(audioCtx.currentTime + duration);
+            },
+            stop: () => {},
+          };
+        }
+
+        function createVictoryFanfare() {
+          return {
+            play: () => {
+              if (!audioCtx) return;
+              if (audioCtx.state === "suspended") {
+                audioCtx.resume();
+              }
+              const notes = [
+                261.63, 329.63, 392.0, 523.25, 659.25, 783.99, 1046.5,
+              ]; // C4 to C6 arpeggio
+              const timings = [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0];
+
+              // Bass drum sound
+              const drum = audioCtx.createOscillator();
+              const drumGain = audioCtx.createGain();
+              drum.connect(drumGain);
+              drumGain.connect(audioCtx.destination);
+              drum.frequency.setValueAtTime(100, audioCtx.currentTime);
+              drum.frequency.exponentialRampToValueAtTime(
+                0.001,
+                audioCtx.currentTime + 0.5
+              );
+              drumGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+              drumGain.gain.exponentialRampToValueAtTime(
+                0.001,
+                audioCtx.currentTime + 0.5
+              );
+              drum.start();
+              drum.stop(audioCtx.currentTime + 0.5);
+
+              // Melody
+              notes.forEach((note, i) => {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.type = "triangle";
+                oscillator.frequency.setValueAtTime(
+                  note,
+                  audioCtx.currentTime + timings[i]
+                );
+                gainNode.gain.setValueAtTime(
+                  0.25,
+                  audioCtx.currentTime + timings[i]
+                );
+                gainNode.gain.exponentialRampToValueAtTime(
+                  0.01,
+                  audioCtx.currentTime + timings[i] + 0.3
+                );
+                oscillator.start(audioCtx.currentTime + timings[i]);
+                oscillator.stop(audioCtx.currentTime + timings[i] + 0.4);
+              });
+            },
+            stop: () => {},
+          };
+        }
+
+        // --- Voice Synthesis & Audio ---
+        let synth = window.speechSynthesis;
+
+        function speak(text, rate = 0.9) {
+          if (gameState.isMuted || !synth) return;
+          synth.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.rate = rate;
+          synth.speak(utterance);
+        }
+
+        function playSound(type) {
+          if (gameState.isMuted || !sounds[type]) return;
+          sounds[type].play();
+        }
+
+        function stopSound(type) {
+          if (!sounds[type]) return;
+          sounds[type].stop();
+        }
+
+        // --- Screen Transitions ---
+        function switchScreen(hide, show) {
+          hide.classList.add("fade-out");
+          setTimeout(() => {
+            hide.classList.add("hidden");
+            hide.classList.remove("fade-out");
+            show.classList.remove("hidden");
+            show.classList.add("fade-in");
+          }, 300);
+        }
+
+        // --- Helper Utilities ---
+        function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
+
+        // --- Core Game Logic ---
+        function resetGame() {
+          gameState = {
+            scores: { A: 0, B: 0, C: 0 },
+            teamNames: { A: "Team A", B: "Team B", C: "Team C" },
+            answeredCount: 0,
+            totalQuestions: 0,
+            isPaused: false,
+            isMuted: false,
+            teams: ["A", "B", "C"],
+            currentTeamIndex: -1,
+            selectedCategory: null,
+            selectedCount: null,
+            timerInterval: null,
+            activeQuestion: null,
+            questionPool: [],
+          };
+
+          if (synth) synth.cancel();
+
+          document
+            .querySelectorAll(".setup-btn.active")
+            .forEach((b) => b.classList.remove("active"));
+          customQInput.value = "";
+          finishSetupBtn.disabled = true;
+
+          teamNameSpans.forEach((span) => {
+            const team = span.dataset.team;
+            span.textContent = gameState.teamNames[team];
+          });
+
+          updateScoresUI();
+          resetQuestionArea();
+          gameStatusText.textContent = "Welcome! Customize team names above.";
+          Object.values(scoreBoxes).forEach((box) =>
+            box.classList.remove("highlight-turn")
+          );
+          muteToggle.textContent = "🔊";
+        }
+
+        function checkSetupCompletion() {
+          const countSelected =
+            gameState.selectedCount !== null && gameState.selectedCount > 0;
+          const categorySelected = gameState.selectedCategory !== null;
+          finishSetupBtn.disabled = !(countSelected && categorySelected);
+        }
+
+        function initializeGame() {
+          let questionSet;
+          if (gameState.selectedCategory === "Mix") {
+            questionSet = [...allQuestions];
+          } else {
+            questionSet = allQuestions.filter(
+              (q) => q.category === gameState.selectedCategory
+            );
+          }
+          shuffleArray(questionSet);
+
+          let total =
+            gameState.selectedCount === "All" ||
+            parseInt(gameState.selectedCount) > questionSet.length
+              ? questionSet.length
+              : parseInt(gameState.selectedCount);
+
+          if (isNaN(total) || total <= 0) {
+            gameStatusText.textContent =
+              "Invalid number of questions. Please go back and setup again.";
+            return;
+          }
+          gameState.totalQuestions = total;
+          gameState.questionPool = questionSet.slice(0, total);
+
+          if (gameState.questionPool.length === 0) {
+            gameStatusText.textContent = `No questions found for '${gameState.selectedCategory}'. Please restart.`;
+            return;
+          }
+
+          createQuestionPicker(gameState.totalQuestions);
+
+          switchScreen(setupScreen, gameBoard);
+          nextTurn();
+        }
+
+        function createQuestionPicker(count) {
+          questionPicker.innerHTML = "";
+          for (let i = 0; i < count; i++) {
+            const box = document.createElement("div");
+            box.className = "question-box";
+            box.textContent = i + 1;
+            box.dataset.index = i;
+            box.addEventListener("click", () => pickQuestion(box, i));
+            questionPicker.appendChild(box);
+          }
+          questionPicker.classList.add("disabled");
+        }
+
+        function updateScoresUI() {
+          for (const team in gameState.scores) {
+            scoreDisplays[team].textContent = gameState.scores[team];
+            gameState.teamNames[team] = document.getElementById(
+              `team-name-${team.toLowerCase()}`
+            ).textContent;
+          }
+        }
+
+        function adjustScore(team, change) {
+          playSound("click");
+          gameState.scores[team] = Math.max(0, gameState.scores[team] + change);
+          updateScoresUI();
+        }
+
+        function nextTurn() {
+          gameState.currentTeamIndex =
+            (gameState.currentTeamIndex + 1) % gameState.teams.length;
+          gameState.currentTeam = gameState.teams[gameState.currentTeamIndex];
+          const currentTeamName = gameState.teamNames[gameState.currentTeam];
+          gameStatusText.textContent = `${currentTeamName}, pick a question!`;
+
+          Object.values(scoreBoxes).forEach((box) =>
+            box.classList.remove("highlight-turn")
+          );
+          scoreBoxes[gameState.currentTeam].classList.add("highlight-turn");
+
+          questionPicker.classList.remove("disabled");
+          resetQuestionArea();
+        }
+
+        function pickQuestion(boxElement, index) {
+          if (boxElement.classList.contains("used")) return;
+          playSound("click");
+
+          gameState.activeQuestion = gameState.questionPool[index];
+
+          boxElement.classList.add("used");
+
+          questionPicker.classList.add("disabled");
+          const currentTeamName = gameState.teamNames[gameState.currentTeam];
+          gameStatusText.textContent = `Question for ${currentTeamName}`;
+          questionArea.classList.remove("hidden");
+          questionText.textContent = "Get Ready...";
+
+          const startBtn = document.createElement("button");
+          startBtn.className = "btn";
+          startBtn.textContent = "Start Timer & Reveal Question";
+          startBtn.onclick = () => {
+            playSound("click");
+            startTimer();
+          };
+          actionWrapper.innerHTML = "";
+          actionWrapper.appendChild(startBtn);
+        }
+
+        function getTimerDuration(difficulty) {
+          if (difficulty === "hard") return 45;
+          if (difficulty === "medium") return 35;
+          return 25; // easy
+        }
+
+        function startTimer() {
+          const duration = getTimerDuration(
+            gameState.activeQuestion.difficulty
+          );
+          gameState.timerDuration = duration * 1000; // Store in ms
+          gameState.timerStartTime = Date.now();
+          gameState.pauseOffset = 0;
+          gameState.lastSecond = duration;
+
+          questionText.textContent = gameState.activeQuestion.question;
+          speak(gameState.activeQuestion.question);
+
+          actionWrapper.innerHTML = `
+                    <div id="question-controls">
+                        <button id="pause-resume-btn" class="btn control-btn" title="Pause/Resume">⏸️</button>
+                        <button id="show-answer-now-btn" class="btn" style="background-color: var(--color-primary); color: #000;">Show Answer</button>
+                        <button id="listen-btn" class="btn control-btn" title="Listen Again">🔉</button>
+                        <button id="translate-btn" class="btn control-btn" title="Translate to Nepali">🌐</button>
+                    </div>`;
+
+          document.getElementById("pause-resume-btn").onclick =
+            toggleTimerPause;
+          document.getElementById("show-answer-now-btn").onclick = () => {
+            playSound("click");
+            revealAnswer();
+          };
+          document.getElementById("listen-btn").onclick = () =>
+            speak(gameState.activeQuestion.question);
+          document.getElementById("translate-btn").onclick = translateQuestion;
+
+          resumeTimer();
+        }
+
+        function updateTimerDisplay() {
+          const elapsed =
+            Date.now() - gameState.timerStartTime - gameState.pauseOffset;
+          const remainingMs = Math.max(0, gameState.timerDuration - elapsed);
+          const remainingSec = Math.ceil(remainingMs / 1000);
+
+          if (remainingSec < gameState.lastSecond) {
+            timerText.textContent = remainingSec;
+            gameState.lastSecond = remainingSec;
+          }
+
+          const percentage = (remainingMs / gameState.timerDuration) * 100;
+          timerBar.style.width = `${percentage}%`;
+
+          const isLowTime = remainingSec <= 10;
+          timerText.classList.toggle("low-time", isLowTime);
+          timerBar.classList.toggle("low-time", isLowTime);
+
+          if (remainingMs <= 0) {
+            timerText.textContent = 0;
+            revealAnswer(true); // isTimeUp = true
+          }
+        }
+
+        function resumeTimer() {
+          gameState.isPaused = false;
+          if (gameState.timeAtPause) {
+            gameState.pauseOffset += Date.now() - gameState.timeAtPause;
+          }
+          const pauseBtn = document.getElementById("pause-resume-btn");
+          if (pauseBtn) pauseBtn.innerHTML = "⏸️";
+
+          clearInterval(gameState.timerInterval);
+          gameState.timerInterval = setInterval(updateTimerDisplay, 50);
+        }
+
+        function pauseTimer() {
+          gameState.isPaused = true;
+          gameState.timeAtPause = Date.now();
+          clearInterval(gameState.timerInterval);
+          const pauseBtn = document.getElementById("pause-resume-btn");
+          if (pauseBtn) pauseBtn.innerHTML = "▶️";
+        }
+
+        function toggleTimerPause() {
+          playSound("click");
+          gameState.isPaused ? resumeTimer() : pauseTimer();
+        }
+
+        function translateQuestion() {
+          playSound("click");
+          const text = encodeURIComponent(gameState.activeQuestion.question);
+          const url = `https://translate.google.com/?sl=auto&tl=ne&text=${text}&op=translate`;
+          window.open(url, "_blank");
+        }
+
+        function revealAnswer(isTimeUp = false) {
+          clearInterval(gameState.timerInterval);
+          actionWrapper.innerHTML = "";
+
+          if (isTimeUp) {
+            playSound("wrong");
+            answerText.innerHTML = `<strong>TIME'S UP!</strong><br><br>${gameState.activeQuestion.answer}`;
+          } else {
+            answerText.innerHTML = gameState.activeQuestion.answer;
+          }
+          speak(`The answer is: ${gameState.activeQuestion.answer}`);
+          scoringButtons.classList.remove("hidden");
+          answerModal.classList.add("visible");
+        }
+
+        function handleScore(wasCorrect) {
+          playSound(wasCorrect ? "correct" : "wrong");
+          if (wasCorrect) gameState.scores[gameState.currentTeam]++;
+          updateScoresUI();
+          gameState.answeredCount++;
+
+          if (synth) synth.cancel();
+          answerModal.classList.remove("visible");
+          scoringButtons.classList.add("hidden");
+
+          if (gameState.answeredCount >= gameState.totalQuestions) {
+            endGame();
+          } else {
+            nextTurn();
+          }
+        }
+
+        function resetQuestionArea() {
+          questionArea.classList.add("hidden");
+          timerText.textContent = "--";
+          timerBar.style.width = "100%";
+          timerText.classList.remove("low-time");
+          timerBar.classList.remove("low-time");
+          actionWrapper.innerHTML = "";
+        }
+
+        function endGame() {
+          clearInterval(gameState.timerInterval);
+
+          const finalScores = gameState.scores;
+          const teamNames = gameState.teamNames;
+
+          let maxScore = -1;
+          for (const team of gameState.teams) {
+            if (finalScores[team] > maxScore) {
+              maxScore = finalScores[team];
+            }
+          }
+
+          const winners = gameState.teams.filter(
+            (team) => finalScores[team] === maxScore
+          );
+
+          const winnerNames = winners.map((team) => teamNames[team]);
+
+          const victoryMessages = [
+            `A Legendary Victory for ${winnerNames.join(" & ")}!`,
+            `Incredible! ${winnerNames.join(
+              " & "
+            )} are the new Quiz Champions!`,
+            `Unstoppable! Congratulations ${winnerNames.join(" & ")}!`,
+          ];
+
+          if (winnerNames.length > 1) {
+            winnerText.textContent = `It's a Tie! Well done, ${winnerNames.join(
+              " and "
+            )}!`;
+          } else {
+            winnerText.textContent =
+              victoryMessages[
+                Math.floor(Math.random() * victoryMessages.length)
+              ];
+          }
+          speak(winnerText.textContent);
+
+          for (const team of gameState.teams) {
+            finalScoreDisplays[
+              team
+            ].textContent = `${teamNames[team]}: ${finalScores[team]}`;
+            finalScoreDisplays[
+              team
+            ].style.backgroundColor = `var(--color-team-${team.toLowerCase()})`;
+          }
+
+          switchScreen(gameBoard, endScreen);
+          playSound("victory");
+          if (typeof confetti === "function") {
+            // Make it a bigger celebration
+            confetti({ particleCount: 400, spread: 120, origin: { y: 0.6 } });
+            setTimeout(
+              () =>
+                confetti({
+                  particleCount: 200,
+                  angle: 60,
+                  spread: 80,
+                  origin: { x: 0 },
+                }),
+              300
+            );
+            setTimeout(
+              () =>
+                confetti({
+                  particleCount: 200,
+                  angle: 120,
+                  spread: 80,
+                  origin: { x: 1 },
+                }),
+              300
+            );
+          }
+        }
+
+        // --- Event Listeners Setup ---
+        document
+          .getElementById("enter-setup-btn")
+          .addEventListener("click", () => {
+            createSounds();
+            playSound("click");
+            switchScreen(introScreen, setupScreen);
+          });
+
+        categoryOptions.addEventListener("click", (e) => {
+          if (e.target.classList.contains("setup-btn")) {
+            playSound("click");
+            categoryOptions
+              .querySelectorAll(".setup-btn")
+              .forEach((b) => b.classList.remove("active"));
+            e.target.classList.add("active");
+            gameState.selectedCategory = e.target.dataset.category;
+            checkSetupCompletion();
+          }
+        });
+
+        countOptions.addEventListener("click", (e) => {
+          if (e.target.classList.contains("setup-btn")) {
+            playSound("click");
+            countOptions
+              .querySelectorAll(".setup-btn")
+              .forEach((b) => b.classList.remove("active"));
+            e.target.classList.add("active");
+            gameState.selectedCount =
+              e.target.dataset.count === "All"
+                ? "All"
+                : parseInt(e.target.dataset.count);
+            customQInput.value = "";
+            checkSetupCompletion();
+          }
+        });
+
+        customQInput.addEventListener("input", (e) => {
+          countOptions
+            .querySelectorAll(".setup-btn")
+            .forEach((b) => b.classList.remove("active"));
+          const val = parseInt(e.target.value);
+          gameState.selectedCount = val > 0 ? val : null;
+          checkSetupCompletion();
+        });
+
+        finishSetupBtn.addEventListener("click", () => {
+          if (finishSetupBtn.disabled) return;
+          playSound("click");
+          initializeGame();
+        });
+
+        muteToggle.addEventListener("click", () => {
+          gameState.isMuted = !gameState.isMuted;
+          muteToggle.textContent = gameState.isMuted ? "🔇" : "🔊";
+          if (gameState.isMuted && synth) synth.cancel();
+          playSound("click");
+        });
+
+        endQuizBtn.addEventListener("click", () => {
+          playSound("click");
+          endGame();
+        });
+
+        scoreBoard.addEventListener("click", (e) => {
+          if (e.target.classList.contains("score-btn")) {
+            const team = e.target.dataset.team;
+            const change = parseInt(e.target.dataset.change);
+            adjustScore(team, change);
+          }
+        });
+
+        teamNameSpans.forEach((span) => {
+          span.addEventListener("blur", (e) => {
+            const team = e.target.dataset.team;
+            const newName = e.target.textContent.trim();
+            gameState.teamNames[team] = newName || `Team ${team}`;
+            e.target.textContent = gameState.teamNames[team];
+            updateScoresUI();
+          });
+          span.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              e.target.blur();
+            }
+          });
+        });
+
+        wasCorrectBtn.addEventListener("click", () => handleScore(true));
+        wasWrongBtn.addEventListener("click", () => handleScore(false));
+        restartBtn.addEventListener("click", () => {
+          playSound("click");
+          switchScreen(endScreen, setupScreen);
+          setTimeout(resetGame, 300);
+        });
+
+        // --- Particle Animation ---
+        const canvas = document.getElementById("particle-canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particles = [];
+        function createParticles() {
+          particles = [];
+          let particleCount = Math.floor(canvas.width / 40);
+          for (let i = 0; i < particleCount; i++) {
+            particles.push({
+              x: Math.random() * canvas.width,
+              y: Math.random() * canvas.height,
+              vx: (Math.random() - 0.5) * 0.3,
+              vy: (Math.random() - 0.5) * 0.3,
+              radius: Math.random() * 2 + 1,
+            });
+          }
+        }
+        function animateParticles() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+          for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width) p.vx = -p.vx;
+            if (p.y < 0 || p.y > canvas.height) p.vy = -p.vy;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          requestAnimationFrame(animateParticles);
+        }
+        window.addEventListener("resize", () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          createParticles();
+        });
+
+        // --- Initial Game Reset ---
+        resetGame();
+        createParticles();
+        animateParticles();
+      });
+    </script>
+  </body>
+</html>
