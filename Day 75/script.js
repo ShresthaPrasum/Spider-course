@@ -1,7 +1,7 @@
 let isrunning = false;
 let intervalId = null;
 
-boy = ["Prasoon", "Pratik Adhikari", "Pratik Chalise","Unknown"]
+boy = ["Prasoon", "Pratik Adhikari", "Pratik Chalise","Prasoon"]
 girl = ["Khusum", "Salisa", "Samipa", "Sona"]
 
 function getrandomnum(){
