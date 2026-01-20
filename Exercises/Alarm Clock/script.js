@@ -70,7 +70,6 @@ function extrazero(e) {
     input.value = pad(num);
 }
 
-// Attach event listeners
 inputs.forEach(input => input.addEventListener("input", extrazero));
 btn.addEventListener("click", userinput);
 cbtn.addEventListener("click", ctime);
