@@ -3,9 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Spotify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" href="Utility.css">
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            font-family: "Google Sans", sans-serif;
+        }
+        .header {
+            height: 65px;
+            width: 100%;
+        }
+        img {
+            height: 24px;
+            width: 24px;
+            cursor: pointer;
+        }
+        .logo{
+            display: flex;
+            position: absolute;
+            margin-left: 20px;
+            height: 100%;
+            width: 100px;
+        }
+        .svg{
+            background-color: rgba(128, 128, 128, 0.299);
+            border-radius: 50%;
+            padding: 12px;
+        }
+        .svg1{
+            border-radius: 50%;
+        }
+        .middle{
+            width: 65%;
+            margin-left: auto;
+        }
+        .middle-first{
+            gap: 6px;
+        }
+        .search{
+            background-color: rgba(128, 128, 128, 0.299);
+            border-radius: 25px;
+            padding: 12px;
+            width: 400px;
+        }
+        #input{
+            background-color: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font: 20px;
+            margin-left: 10px;
+            width: 90%;
+            height: 100%;
+        }
+        .right{
+            width: 80%;
+            margin-right: 50px;
+            justify-content: space-evenly;
+            gap: 5px;
+        }
+        .explore{
+            background-color: white;
+            border: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .install{
+            background-color: rgba(128, 128, 128, 0.289);
+            color: white;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+        }
+        #acc{
+            background-color: #1DB954;
+            color: black;
+            height: 32px;
+            width: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-left: 20px;
+        }
+        .slidebar{
+            width: 28%;
+            height: 79vh;
+            background-color: #1918188f;
+            position: fixed;
+            border-radius: 10px;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+            box-sizing: border-box;
+        }
+        .top h3{
+            font-size: 15px;
+        }
+        .create{
+            background-color: #1DB954;
+            border: none;
+            color: black;
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: auto;
+            margin-right: 10px;
+        }
+        .option{
+            background-color: rgba(128, 128, 128, 0.179);
+            border: none;
+            color: rgb(255, 255, 255);
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .recents{
+            gap: 10px;
+            cursor: pointer;
+        }
+        .svg-search{
+            border-radius: 50%;
+        }
+        .recent{
+            font-size: 14px;
+            margin-left: auto;
+        }
+        .recent img{
+            height: 16px;
+            width: 16px;
+            margin-left: 5px;
+        }
+        ul{
+            display: flex;
+            flex-direction: column;
+            row-gap: 10px;
+            list-style: none;
+            height: auto;
+            width: 100%;
+        }
+        
+        .artist{
+            display: flex;
+            height: 100%;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .artist-cover{
+            height: 50px;
+            width: 50px;
+            border-radius: 50px;
+        }
+        .description{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        </style>
 </head>
-<body>
-    div
+<body class="bg-black">
+    <div class="container flex items-center">
+        <img src="Img/logo.svg" alt="Spotify Logo" class="logo invert">
+        <div class="header flex items-center">
+            <div class="middle flex items-center">
+                <div class="middle-first flex justify-center items-center">
+                    <img src="Img/home.svg" alt="home" class="svg invert">
+                    <div class="search justify-center items-center flex">
+                        <img src="Img/search.svg" alt="search" class="invert">
+                        <input type="text" id="input" placeholder="What do you want to listen?">
+                    </div>
+                </div>
+                <div class="right flex items-center">                   
+                    <button class="explore">Explore Premium</button>
+                    <button class="install">Install App</button>
+                    <img src="Img/notification-copy-svgrepo-com.svg" alt="" class="invert1 svg1">
+                    <img src="Img/group-of-people-svgrepo-com.svg" alt="" class="invert1 svg1">
+                    <h3 id="acc">P</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slidebar flex ">
+
+        <div class="top flex items-center">
+            <h3>Your Library</h3>
+            <button class="create"><i class="fas fa-plus"></i> Create</button>
+            <i class="fas fa-compress"></i>
+        </div>
+
+        <div class="options flex">
+            <h3 class="option">Playlist</h3>
+            <h3 class="option">Artists</h3>
+        </div>
+
+        <div class="recents flex items-center">
+            <img src="Img/search.svg" alt="" class="svg-search invert1">
+            <h3 class="recent flex items-center bg-grey">Recents <img src="Img/hamburger.svg" alt="" class="invert" ></h3>
+        </div>
+
+        <div class="artists flex">
+            <ul>
+                <li class="artist">
+                    <div class="cover">
+                        <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
+                    </div>
+                    <div class="description">
+                        <h4>Niche Loyal</h4>
+                        <p class="bg-grey">Artists</p>
+                    </div>
+                </li>
+                <li class="artist">
+                    <div class="cover">
+                        <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
+                    </div>
+                    <div class="description">
+                        <h4>Niche Loyal</h4>
+                        <p class="bg-grey">Artists</p>
+                    </div>
+                </li>
+                <li class="artist">
+                    <div class="cover">
+                        <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
+                    </div>
+                    <div class="description">
+                        <h4>Niche Loyal</h4>
+                        <p class="bg-grey">Artists</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="contents"></div>
 </body>
 </html>

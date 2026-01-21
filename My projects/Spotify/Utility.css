@@ -23,9 +23,13 @@
 .invert{
     filter: invert(1);
 }
+.invert1{
+    filter: invert(0.5);
+}
 
 .bg-grey{
-    background-color: #121212;
+    color: grey;
+    font-size: 14px;
 }
 
 .rounded{
