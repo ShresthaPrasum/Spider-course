@@ -15,6 +15,15 @@
             margin: 0;
             font-family: "Google Sans", sans-serif;
         }
+        html,body{
+            height: 100%;
+            width: 100%;
+            color: white;
+        }
+        body{
+            flex-direction: column;
+            box-sizing: border-box;
+        }
         .header {
             height: 65px;
             width: 100%;
@@ -96,11 +105,16 @@
             cursor: pointer;
             margin-left: 20px;
         }
+        .main-content{
+            flex: 1;
+            width: 100%;
+            gap: 20px;
+        }
         .slidebar{
             width: 28%;
-            height: 79vh;
+            height: 100%;
             background-color: #1918188f;
-            position: fixed;
+            position: sticky;
             border-radius: 10px;
             flex-direction: column;
             padding: 20px;
@@ -173,9 +187,58 @@
             flex-direction: column;
             justify-content: center;
         }
+        .contents{
+            width: 70%;
+            height: 100%;
+            background-color: #1918188f;
+            border-radius: 10px;
+            flex-direction: column;
+            margin-left: auto;
+        }
+          @media (max-width: 768px) {
+
+            .logo{
+                max-width: 70px;
+            }
+            .slidebar {
+                display: none;
+            }
+            .header{
+                justify-content: center;
+            }
+
+
+            .contents {
+                width: 100%;
+                margin-left: 0;
+            }
+
+
+            .middle {
+                width: 80%;
+                margin-left: 0;
+            }
+
+            .search {
+                max-width: 150px;
+                padding: 8px;
+            }
+
+            .explore,
+            .install {
+                display: none;
+            }
+            .right{
+                margin-right: 0px;
+                margin-left: 10px;
+            }
+            .main-content {
+                flex-direction: column;
+            }
+        }
         </style>
 </head>
-<body class="bg-black">
+<body class="bg-black flex">
     <div class="container flex items-center">
         <img src="Img/logo.svg" alt="Spotify Logo" class="logo invert">
         <div class="header flex items-center">
@@ -197,56 +260,69 @@
             </div>
         </div>
     </div>
-    <div class="slidebar flex ">
+    <div class="main-content flex">
+        <div class="slidebar flex ">
 
-        <div class="top flex items-center">
-            <h3>Your Library</h3>
-            <button class="create"><i class="fas fa-plus"></i> Create</button>
-            <i class="fas fa-compress"></i>
+            <div class="top flex items-center">
+                <h3>Your Library</h3>
+                <button class="create"><i class="fas fa-plus"></i> Create</button>
+                <i class="fas fa-compress"></i>
+            </div>
+
+            <div class="options flex">
+                <h3 class="option">Playlist</h3>
+                <h3 class="option">Artists</h3>
+            </div>
+
+            <div class="recents flex items-center">
+                <img src="Img/search.svg" alt="" class="svg-search invert1">
+                <h3 class="recent flex items-center bg-grey">Recents <img src="Img/hamburger.svg" alt="" class="invert" ></h3>
+            </div>
+
+            <div class="artists flex">
+                <ul>
+                    <li class="artist">
+                        <div class="cover">
+                            <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
+                        </div>
+                        <div class="description">
+                            <h4>Niche Loyal</h4>
+                            <p class="bg-grey">Artists</p>
+                        </div>
+                    </li>
+                    <li class="artist">
+                        <div class="cover">
+                            <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
+                        </div>
+                        <div class="description">
+                            <h4>Niche Loyal</h4>
+                            <p class="bg-grey">Artists</p>
+                        </div>
+                    </li>
+                    <li class="artist">
+                        <div class="cover">
+                            <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
+                        </div>
+                        <div class="description">
+                            <h4>Niche Loyal</h4>
+                            <p class="bg-grey">Artists</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
+        <div class="contents flex">
+            <div class="content-header">
+            </div>
+            <div class="spotify-musics">
+                <div class="recommended">
 
-        <div class="options flex">
-            <h3 class="option">Playlist</h3>
-            <h3 class="option">Artists</h3>
-        </div>
+                </div>
+                <div class="popular-songs">
 
-        <div class="recents flex items-center">
-            <img src="Img/search.svg" alt="" class="svg-search invert1">
-            <h3 class="recent flex items-center bg-grey">Recents <img src="Img/hamburger.svg" alt="" class="invert" ></h3>
-        </div>
-
-        <div class="artists flex">
-            <ul>
-                <li class="artist">
-                    <div class="cover">
-                        <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
-                    </div>
-                    <div class="description">
-                        <h4>Niche Loyal</h4>
-                        <p class="bg-grey">Artists</p>
-                    </div>
-                </li>
-                <li class="artist">
-                    <div class="cover">
-                        <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
-                    </div>
-                    <div class="description">
-                        <h4>Niche Loyal</h4>
-                        <p class="bg-grey">Artists</p>
-                    </div>
-                </li>
-                <li class="artist">
-                    <div class="cover">
-                        <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
-                    </div>
-                    <div class="description">
-                        <h4>Niche Loyal</h4>
-                        <p class="bg-grey">Artists</p>
-                    </div>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="contents"></div>
 </body>
 </html>
