@@ -123,7 +123,7 @@
         }
 
         .main-content {
-            height: 80vh;
+            height: 78vh;
             width: 100%;
             gap: 10px;
             box-sizing: border-box;
@@ -131,7 +131,7 @@
 
         .slidebar {
             width: 24%;
-            height: 80vh;
+            height: 78vh;
             background-color: #1918188f;
             border-radius: 10px;
             flex-direction: column;
@@ -221,6 +221,7 @@
 
         .contents {
             width: 70%;
+            flex: 1;
             border-radius: 10px;
             flex-direction: column;
             padding: 16px 42px;
@@ -228,73 +229,6 @@
             background-color: #181818;
             overflow: auto;
         }
-
-        @media (max-width: 1270px) {
-            .middle {
-                width: 75%;
-            }
-
-            .search {
-                width: 300px;
-            }
-        }
-
-        @media (max-width: 1050px) {
-            .middle {
-                width: 75%;
-            }
-
-            .search {
-                width: 200px;
-            }
-        }
-
-        @media (max-width: 780px) {
-
-            .logo {
-                max-width: 70px;
-            }
-
-            .slidebar {
-                display: none;
-            }
-
-            .header {
-                justify-content: center;
-            }
-
-
-            .contents {
-                width: 100%;
-                margin-left: 0;
-            }
-
-
-            .middle {
-                width: 80%;
-                margin-left: 0;
-            }
-
-            .search {
-                max-width: 150px;
-                padding: 8px;
-            }
-
-            .explore,
-            .install {
-                display: none;
-            }
-
-            .right {
-                margin-right: 0px;
-                margin-left: 10px;
-            }
-
-            .main-content {
-                flex-direction: column;
-            }
-        }
-
 
         .recommended,
         .popular-songs {
@@ -306,7 +240,7 @@
         }
 
         .footer {
-            height: 15vh;
+            height: 28vh;
             width: 100%;
         }
 
@@ -316,9 +250,40 @@
         }
 
         .footer-left {
+            width: 10%;
             flex-direction: column;
             row-gap: 3px;
         }
+
+        .footer-center {
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            justify-content: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+
+        }
+
+        .song-time {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer-right {
+            display: flex;
+            width: 10%;
+            align-items: center;
+            gap: 10px;
+        }
+
 
         #song-name {
             font-size: 14px;
@@ -331,6 +296,7 @@
         }
 
         .music {
+            position: relative;
             display: flex;
             flex-direction: column;
             row-gap: 5px;
@@ -388,6 +354,173 @@
             cursor: not-allowed;
             opacity: 0.5;
         }
+
+        .next-btn {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .play-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(255, 255, 255);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            color: rgb(0, 0, 0);
+            cursor: pointer;
+        }
+
+        .press-play {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            font-size: large;
+            top: 67%;
+            left: 70%;
+            width: 45px;
+            height: 45px;
+            background-color: rgb(0, 255, 13);
+            border-radius: 50%;
+            border: none;
+            color: rgb(0, 0, 0);
+            cursor: pointer;
+            /* Optional: add hover effect */
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .music:hover .press-play {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
+
+        #total-time {
+            scrollbar-width: thin;
+        }
+        #progress-bar {
+            width: 40%;
+            height: 4px;
+            background: linear-gradient(to right, #1DB954 0%, #1DB954 0%, #ec1f1f 0%, #ff0606 100%);
+            border-radius: 10px;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.2s linear;
+        }
+
+
+        #progress-bar::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
+                @media (max-width: 1270px) {
+            .middle {
+                width: 75%;
+            }
+            .contents{
+                padding: 12px;
+            }
+
+            .search {
+                width: 300px;
+            }
+            .footer{
+                height: 10vh;
+            }
+        }
+
+        @media (max-width: 1050px) {
+            .middle {
+                width: 75%;
+            }
+            .contents{
+                padding: 12px;
+            }
+            .search {
+                width: 200px;
+            }
+            .footer{
+                height: 10vh;
+            }
+        }
+
+        @media (max-width: 780px) {
+
+            .logo {
+                display: none;
+                position: relative;
+                max-width: 70px;
+            }
+            .contents{
+                padding: 12px;
+            }
+            .slidebar {
+                display: none;
+            }
+
+            .header {
+                justify-content: center;
+            }
+            .middle{
+                justify-content: center;
+            }
+
+
+            .contents {
+                width: 100%;
+                margin-left: 0;
+            }
+
+
+            .middle {
+                width: 80%;
+                margin-left: 0;
+            }
+
+            .search {
+                max-width: 150px;
+                padding: 8px;
+            }
+
+            .explore,
+            .install {
+                display: none;
+            }
+
+            .right {
+                margin-right: 0px;
+                margin-left: 10px;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+            .footer{
+                justify-content: start;
+                height: 20vh;
+            }
+            .footer-content{
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            .footer-right{
+                display: none;
+            }
+            .footer-center{
+                width: 60%;
+            }
+            .footer-left {
+                display: flex;
+            }
+        }
+
+
     </style>
 </head>
 
@@ -446,19 +579,19 @@
                     </li>
                     <li class="artist">
                         <div class="cover">
-                            <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
+                            <img src="songs/Funky_(mood)/cover.jpg" alt="" class="artist-cover">
                         </div>
                         <div class="description">
-                            <h4>Niche Loyal</h4>
+                            <h4>Artic Monkey</h4>
                             <p class="bg-grey">Artists</p>
                         </div>
                     </li>
                     <li class="artist">
                         <div class="cover">
-                            <img src="songs/Angry_(mood)/cover.jpg" alt="" class="artist-cover">
+                            <img src="songs/karan aujla/cover.jpg" alt="" class="artist-cover">
                         </div>
                         <div class="description">
-                            <h4>Niche Loyal</h4>
+                            <h4>Karan Aujla</h4>
                             <p class="bg-grey">Artists</p>
                         </div>
                     </li>
@@ -481,59 +614,12 @@
                         </div>
                     </div>
                     <div class="musics" id="musicContainer">
+                        <!-- <div class="music">
+                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
+                            <p id="song-name">Bright Mood</p>
+                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
+                        </div> -->
 
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Bright_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Bright Mood</p>
-                            <p id="artist-name" class="bg-grey">Bille Ellish</p>
-                        </div>
-                        
-                        
                     </div>
                 </div>
                 <div class="recommended flex">
@@ -545,75 +631,13 @@
                         </div>
                     </div>
                     <div class="musics" id="musicContainer1">
-
-                        
-                        <div class="music">
+                        <!-- <div class="music">
                             <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
+                            <button class="press-play"><i class="fas fa-play"></i></button>
                             <p id="song-name">Dark Mood</p>
                             <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        <div class="music">
-                            <img src="songs/Dark_(mood)/cover.jpg" alt="" class="music-cover">
-                            <p id="song-name">Dark Mood</p>
-                            <p id="artist-name" class="bg-grey">Kendrick Lamar</p>
-                        </div>
-                        
-                        
-                        
+                        </div> -->
                     </div>
-                </div>
-                <div class="popular-songs">
-
                 </div>
             </div>
         </div>
@@ -622,12 +646,19 @@
         <div class="footer-content flex items-center">
             <div class="footer-left flex">
                 <h4 id="song-name">Song Name</h4>
-                <p class="bg-grey" id="artist-name">Artist Name</p>
+                <!-- <p class="bg-grey" id="artist-name">Artist Name</p> -->
             </div>
             <div class="footer-center">
-                <button class="next-btn"><i class="fas fa-backward"></i></button>
-                <button class="play-btn"><i class="fas fa-play"></i></button>
-                <button class="next-btn"><i class="fas fa-forward"></i></button>
+                <div class="controls">
+                    <button class="next-btn" id="previous-song"><i class="fas fa-backward"></i></button>
+                    <button class="play-btn"><i class="fas fa-play"></i></button>
+                    <button class="next-btn" id="next-song"><i class="fas fa-forward"></i></button>
+                </div>
+                <div class="song-time">
+                    <span id="current-time">0:00</span>
+                    <input type="range" id="progress-bar" min="0" max="200" value="0">
+                    <span id="total-time">3:30</span>
+                </div>
             </div>
             <div class="footer-right">
                 <img src="Img/volume.svg" alt="" class="invert">
