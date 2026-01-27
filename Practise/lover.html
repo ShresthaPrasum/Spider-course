@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find the lover</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, rgb(5, 182, 241), rgba(165, 16, 145, 0.538));
+        }
+
+        .love-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 60%;
+            width: 40%;
+            border: 2px solid black;
+            color: wheat;
+        }
+        .love-box{
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+        }
+        .love-box1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            width: 200px;
+            border: 2px solid black;
+            background-color: rgb(0, 140, 255);
+        }
+
+        .love-box2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            width: 200px;
+            border: 2px solid black;
+            background-color: rgb(165, 10, 165);
+        }
+        button{
+            margin-top: 50px;
+            padding: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="love-container">
+        <div class="love-box">     
+            <div class="love-box1">
+                <h2>
+                    Nibba 1
+                </h2>
+            </div>
+            <div class="love-box2">
+                <h2>
+                    Nibbi 2
+                </h2>
+            </div>
+        </div>
+    <button>Click Me</button>
+    </div>
+    <script>
+        const love_box1 = document.querySelector(".love-box1")
+        const love_box2 = document.querySelector(".love-box2")
+        const button = document.querySelector("button")
+
+
+
+        function randOpt(){
+            const a = ["Prasoon", "Pratik Chalise", "Pratik Adhikari"," Unknown "]
+            const b = ["Khusum", "Biphasa", "Salisa"," Samipa "]
+            let i = Math.round(Math.random()*3)
+            let j = Math.round(Math.random()*3)
+            
+            love_box1.innerHTML = a[i]
+            love_box2.innerHTML = b[j]         
+        }
+
+        button.addEventListener("click",randOpt)
+
+
+    </script>
+</body>
+
+</html>
