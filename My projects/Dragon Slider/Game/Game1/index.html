@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Slider Games</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 { margin-bottom: 40px; }
+        .menu {
+            display: flex;
+            gap: 20px;
+        }
+        .card {
+            background: #333;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            width: 200px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            text-decoration: none;
+            color: white;
+            border: 2px solid #555;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            background: #444;
+            border-color: #e74c3c;
+        }
+        .card h2 { margin-top: 0; }
+        .icon { font-size: 3rem; margin-bottom: 20px; display: block; }
+    </style>
+</head>
+<body>
+
+    <h1>Select Your Game</h1>
+    
+    <div class="menu">
+        <a href="slider_puzzle.html" class="card">
+            <span class="icon">🧩</span>
+            <h2>Slider Puzzle</h2>
+            <p>Solve the grid!</p>
+        </a>
+
+        <a href="idle_clicker.html" class="card">
+            <span class="icon">🐉</span>
+            <h2>Idle Clicker</h2>
+            <p>Hoard the gold!</p>
+        </a>
+    </div>
+
+</body>
+</html>

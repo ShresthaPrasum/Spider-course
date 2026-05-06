@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Hoard Clicker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #222;
+            color: #ffd700;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 { margin-top: 20px; text-shadow: 0 0 10px #e67e22; }
+        
+        #game-area {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .section {
+            padding: 20px;
+            background: #333;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            width: 300px;
+        }
+
+        /* Clicker Section */
+        #click-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #e74c3c, #c0392b);
+            border: 5px solid #ffd700;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
+        }
+        #click-btn:active { transform: scale(0.95); }
+        
+        .score-display { font-size: 2rem; margin: 20px 0; }
+
+        /* Shop Section */
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #444;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .upgrade-item:hover { background: #555; }
+        .upgrade-item.disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .upgrade-info h4 { margin: 0; font-size: 1rem; color: white; }
+        .upgrade-info p { margin: 0; font-size: 0.8rem; color: #bbb; }
+        .cost { color: #ffd700; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <h1>Dragon Hoard Clicker</h1>
+
+    <div id="game-area">
+        <!-- Click Area -->
+        <div class="section">
+            <div class="score-display">
+                Gold: <span id="gold">0</span>
+            </div>
+            <div style="margin-bottom: 10px; color: #aaa;">
+                Gold per second: <span id="gps">0</span>
+            </div>
+            <button id="click-btn" onclick="clickDragon()">
+                PET DRAGON
+            </button>
+        </div>
+
+        <!-- Shop Area -->
+        <div class="section">
+            <h2>Upgrades</h2>
+            <!-- Upgrade 1 -->
+            <div class="upgrade-item" id="upg1" onclick="buyUpgrade(1)">
+                <div class="upgrade-info">
+                    <h4>Kobold Minion</h4>
+                    <p>Auto-steals +1 gold/sec</p>
+                </div>
+                <div class="cost" id="cost-1">15 G</div>
+            </div>
+
+            <!-- Upgrade 2 -->
+            <div class="upgrade-item" id="upg2" onclick="buyUpgrade(2)">
+                <div class="upgrade-info">
+                    <h4>Golden Claw</h4>
+                    <p>Clicking gives +1 extra</p>
+                </div>
+                <div class="cost" id="cost-2">50 G</div>
+            </div>
+
+             <!-- Upgrade 3 -->
+             <div class="upgrade-item" id="upg3" onclick="buyUpgrade(3)">
+                <div class="upgrade-info">
+                    <h4>Dragon Egg</h4>
+                    <p>Hatch a baby. +10 gold/sec</p>
+                </div>
+                <div class="cost" id="cost-3">200 G</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="clicker.js"></script>
+</body>
+</html>

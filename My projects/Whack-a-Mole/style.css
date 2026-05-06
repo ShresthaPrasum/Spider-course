@@ -1,0 +1,520 @@
+/* ===================================
+   ROOT & GLOBAL STYLES
+   =================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* ===================================
+   GAME CONTAINER
+   =================================== */
+.game-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 1200px;
+    width: 95%;
+    animation: slideDown 0.6s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================================
+   HEADER SECTION
+   =================================== */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #764ba2;
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    letter-spacing: 2px;
+}
+
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1em;
+}
+
+.stat .label {
+    color: #333;
+    font-weight: 600;
+}
+
+.stat .value {
+    color: #667eea;
+    font-weight: bold;
+    font-size: 1.3em;
+    min-width: 50px;
+    text-align: right;
+}
+
+/* ===================================
+   GAME BOARD
+   =================================== */
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(to bottom, #f0f0f0 0%, #e0e0e0 100%);
+    border-radius: 15px;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===================================
+   HOLES
+   =================================== */
+.hole {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle at 30% 30%, #333, #000);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 
+        inset 0 0 10px rgba(0, 0, 0, 0.8),
+        0 5px 15px rgba(0, 0, 0, 0.3),
+        0 -2px 5px rgba(255, 255, 255, 0.1);
+    transition: transform 0.1s ease;
+    overflow: hidden;
+}
+
+.hole:hover {
+    transform: scale(0.95);
+}
+
+.hole:active {
+    transform: scale(0.9);
+}
+
+/* ===================================
+   MOLE STYLES
+   =================================== */
+.mole {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    bottom: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: radial-gradient(circle at 35% 30%, #f4a460, #d2691e);
+    border-radius: 50%;
+    animation: popUp 0.3s ease-out forwards;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes popUp {
+    from {
+        bottom: -100%;
+        transform: translateX(-50%) scale(0.8);
+    }
+    to {
+        bottom: 10%;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+@keyframes popDown {
+    from {
+        bottom: 10%;
+        transform: translateX(-50%) scale(1);
+    }
+    to {
+        bottom: -100%;
+        transform: translateX(-50%) scale(0.8);
+    }
+}
+
+.mole.hiding {
+    animation: popDown 0.3s ease-in forwards;
+}
+
+/* Mole eyes */
+.mole::before,
+.mole::after {
+    content: '';
+    position: absolute;
+    width: 15%;
+    height: 18%;
+    background: white;
+    border-radius: 50%;
+    top: 35%;
+}
+
+.mole::before {
+    left: 20%;
+}
+
+.mole::after {
+    right: 20%;
+}
+
+/* Mole pupils */
+.mole-pupils::before,
+.mole-pupils::after {
+    content: '';
+    position: absolute;
+    width: 8%;
+    height: 10%;
+    background: black;
+    border-radius: 50%;
+    top: 37%;
+}
+
+.mole-pupils::before {
+    left: 24%;
+}
+
+.mole-pupils::after {
+    right: 24%;
+}
+
+/* Mole smile */
+.mole-mouth {
+    position: absolute;
+    width: 25%;
+    height: 15%;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #8b4513;
+    border-radius: 0 0 100% 100%;
+}
+
+/* Hit feedback animation */
+.mole.hit {
+    animation: moleHit 0.4s ease-out forwards;
+}
+
+@keyframes moleHit {
+    0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+    50% {
+        background: radial-gradient(circle at 35% 30%, #ffeb3b, #fbc02d);
+        transform: translateX(-50%) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.8);
+    }
+}
+
+/* Fake mole styling */
+.mole.fake {
+    background: radial-gradient(circle at 35% 30%, #9b59b6, #7d3c98);
+}
+
+.mole.fake::before,
+.mole.fake::after {
+    background: #ff1744;
+}
+
+/* ===================================
+   MISS FEEDBACK
+   =================================== */
+.hole.miss-click {
+    animation: missClick 0.4s ease-out;
+}
+
+@keyframes missClick {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-2deg);
+    }
+    75% {
+        transform: rotate(2deg);
+    }
+}
+
+/* ===================================
+   CONTROLS
+   =================================== */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 12px 30px;
+    font-size: 1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(245, 87, 108, 0.4);
+}
+
+.btn-secondary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-sound {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 12px 20px;
+}
+
+.btn-sound.muted {
+    background: linear-gradient(135deg, #888 0%, #555 100%);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===================================
+   STATUS MESSAGE
+   =================================== */
+.status-message {
+    text-align: center;
+    font-size: 1.2em;
+    color: #333;
+    padding: 15px;
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    border-radius: 5px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.status-message.success {
+    background: #d4edda;
+    border-left-color: #28a745;
+    color: #155724;
+}
+
+.status-message.game-over {
+    background: #f8d7da;
+    border-left-color: #dc3545;
+    color: #721c24;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+@media (max-width: 1024px) {
+    .game-board {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+    }
+
+    .header h1 {
+        font-size: 2em;
+    }
+
+    .stats-container {
+        gap: 15px;
+    }
+
+    .stat {
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-container {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .game-board {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .header h1 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+
+    .stats-container {
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .stat {
+        font-size: 0.9em;
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .controls {
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+
+    .status-message {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-container {
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .game-board {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.5em;
+        margin-bottom: 8px;
+    }
+
+    .stats-container {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .stat {
+        width: 100%;
+        justify-content: space-between;
+        font-size: 0.85em;
+    }
+
+    .controls {
+        gap: 8px;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        font-size: 0.85em;
+        letter-spacing: 0.5px;
+    }
+}
+
+/* ===================================
+   ANIMATIONS & TRANSITIONS
+   =================================== */
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+    }
+}
+
+.btn-primary:focus {
+    animation: pulse 1s infinite;
+}
+
+/* Smooth number updates */
+.stat .value {
+    transition: transform 0.2s ease;
+}
+
+.stat .value.update {
+    animation: scoreUpdate 0.3s ease-out;
+}
+
+@keyframes scoreUpdate {
+    0% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
