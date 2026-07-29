@@ -1,0 +1,242 @@
+body{
+  margin: 0;
+  padding:0;
+  background-color: black;
+  
+}
+.nav{
+  color: white;
+  background: #1c2230;
+  display: flex;
+  justify-content:space-between;
+  width:150vw;
+  align-items: center;
+  padding: 0 40px;
+  height: 13vh;
+  font-size: 70px;
+  color: #80D3F7;
+  font-family:Montserrat;
+  position: sticky;
+  top:0;
+   
+}
+.article{
+  color: #00BFFF;
+text-shadow: 0 0 1px #00BFFF, 0 0 2px #1E90FF;
+  text-align: end;
+  font-size: 6em;
+  margin: 70px 10px;
+  padding: 40px
+}
+  a{
+    
+    background: rgba(0, 191, 255, 0.9);
+    box-size: 20px;
+    border-radius: 15%;
+    width:5em;
+    height: 1.5em;
+    color: white;
+    margin:0 300px;
+    color: white;
+    text-decoration:none;
+    text-align: center;
+    
+  }
+.img{
+  height:270px;
+  width: 270px;
+  object-fit: cover;
+  margin-top: -40px;
+}
+#asteriod{
+  margin-top:-60px;
+  height:290px;
+  width: 290px;
+  object-fit: cover;
+}
+#satellite{
+ height:380px;
+  width: 380px;
+object-fit: contain;
+  margin-top:-80px;
+}
+.astro{
+  height: 50vh;
+  width:100vw;
+  object-fit: cover;
+  object-position: center;
+  
+}
+.word{
+  font-size: 60px;
+  color: antiquewhite;
+  position: relative;
+  top:-710px;
+  left: 780px;
+  transform: rotate(50deg);
+}
+  .nav img{
+    padding-left: 30px;
+    height: 13vh;
+    width: 32vw;
+    object-fit: cover;
+    image-repeat: no-repeat;
+  }
+
+:root{
+  --height: 60vh;
+  --width: 120vw;
+  --background: #1A213B;
+  --color: #80D3F7;
+  --font-family: 
+}
+   p,ol li{
+    color: white;
+}
+p{
+  font-family: Parkinsans;
+  font-size: 58px
+}
+.fact{
+  background: rgba(0, 191, 255, 0.9);
+  color: white;
+  font-family:Montserrat;
+  border-radius: 15px;
+}
+.fact:active{
+  background: black;
+}
+ul li{
+  font-size: 50px;
+  color: whitesmoke;
+  overflow: scroll;
+}
+h4{
+  margin: -30px;
+}
+
+.card1{
+ height: var(--height);
+  width: var(--width);
+  margin: 300px 150px;
+background: var(--background);
+  color: red;
+  font-size: 65px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14% 2% 14% 2%;
+  text-align: center;
+  padding-top: 30px;
+  transition: all 0.2s ease-in;
+}
+.card1:hover{
+box-shadow: 0 20px 50px 25px rgba(0, 191, 255, 0.3);
+
+}
+.card2{
+ height: var(--height);
+  width: var(--width);
+  margin: 300px 150px;
+background: var(--background);
+  color: aqua;
+  font-size: 65px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14% 2% 14% 2%;
+  text-align: center;
+  padding-top: 30px;
+  transition: all 0.2s ease-in;
+}
+.card2:hover{
+box-shadow: 0 20px 50px 25px rgba(0, 191, 255, 0.3);
+
+}
+
+.card3{
+ height: var(--height);
+  width: var(--width);
+  margin: 300px 150px;
+background: var(--background);
+  color: red;
+  font-size: 65px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14% 2% 14% 2%;
+  text-align: center;
+  padding-top: 30px;
+  transition: all 0.2s ease-in;
+}
+.card3:hover{
+box-shadow: 0 20px 50px 25px rgba(0, 191, 255, 0.3);
+
+}
+.card4{
+ height: 65vh;
+  width: var(--width);
+  margin: 300px 150px;
+background: var(--background);
+  color: aqua;
+  font-size: 65px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14% 2% 14% 2%;
+  text-align: center;
+  padding-top: 30px;
+  transition: all 0.2s ease-in;
+}
+.card4:hover{
+box-shadow: 0 20px 50px 25px rgba(0, 191, 255, 0.3);
+
+}
+.card5{
+ height: 60vh;
+  width: var(--width);
+  margin: 300px 150px;
+background: var(--background);
+  color: aqua;
+  font-size: 65px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14% 2% 14% 2%;
+  text-align: center;
+  padding-top: 30px;
+  transition: all 0.2s ease-in;
+}
+.card5:hover{
+box-shadow: 0 20px 50px 25px rgba(0, 191, 255, 0.3);
+
+}
+.h2{
+  margin: -25px;
+}
+.card6{
+ height: 60vh;
+  width: var(--width);
+  margin: 300px 150px;
+background: var(--background);
+  color: red;
+  font-size: 65px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14% 2% 14% 2%;
+  text-align: center;
+  padding-top: 30px;
+  transition: all 0.2s ease-in;
+}
+.card6:hover{
+box-shadow: 0 20px 50px 25px rgba(0, 191, 255, 0.3);
+
+}
+.card7{
+ height: 64vh;
+  width: var(--width);
+  margin: 300px 150px;
+background: var(--background);
+  color: aqua;
+  font-size: 65px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14% 2% 14% 2%;
+  text-align: center;
+  padding-top: 30px;
+  transition: all 0.2s ease-in;
+}
+.card7:hover{
+box-shadow: 0 20px 50px 25px rgba(0, 191, 255, 0.3);
+
+}
+
+

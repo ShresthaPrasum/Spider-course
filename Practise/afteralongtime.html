@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        @font-face {
+            font-family: chewy;
+            src: url(Chewy-Regular.ttf);
+        }
+
+        *{
+            font-family: chewy;
+            margin: 0;
+            padding: 0;
+        }
         body{
             display: flex;
             flex-direction: column;
@@ -22,6 +32,15 @@
             padding: 40px 80px;
             border-radius: 20px;
             background-color: aliceblue;
+            row-gap: 20px;
+            font-size: 20px;
+        }
+
+        #guess{
+            padding: 10px;
+            font-size: 20px;
+            border-radius: 10px;
+            border: 2px solid black;
         }
 
     </style>
@@ -65,7 +84,7 @@
                         result.innerHTML = "You did "+ attempts + " attempts but still didn't win!";
                     }
                     else if(number == rand){
-                        indicator.innerHTML = "That's it!"
+                        indicator.innerHTML = `${rand} is the correct number!`
                         result.innerHTML = "You won in " + attempts + " attempts!";
                     }
                     else{
@@ -73,6 +92,23 @@
                         result.innerHTML = "Y u so g#y";
                     }
                 }
+            }
+        })
+        document.addEventListener("keydown", function checktheinput(){
+            if (event.key === 'Enter') { 
+                input.value = "";
+            }
+            if(event.key === 'r' || event.key === 'R'){
+                location.reload();
+            }
+            if(event.key === 'f' || event.key === 'F'){
+                window.open("https://www.facebook.com/@prasum.shrestha.2025", "_blank", "noopener,noreferrer");
+            }
+            if(event.key === 'I' || event.key === 'i'){
+                window.open("https://www.instagram.com/prasum_shrestha", "_blank", "noopener,noreferrer");
+            }
+            if(event.key === 'G' || event.key === 'g'){
+                window.open("https://www.github.com/ShresthaPrasum", "_blank", "noopener,noreferrer");
             }
         })
     </script>

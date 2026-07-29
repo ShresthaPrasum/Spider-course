@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        form{
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <form action="submit.php" method="get">
+        <div style="display: flex;">
+            <label for="firstname">FirstName: </label>
+            <input type="text" name="firstname" id="firstname" value="Prasum" autofocus required>
+            
+            <label for="lastname">LastName:</label>
+            <input type="text" name="lastname" id="lastname" value="Shrestha" required>
+        </div>
+    
+    <label for="number">Email:</label>
+    <input type="number" name="number" id="number">
+    
+    <div>
+    <label for="gender">Gender:</label>
+    <input type="radio" name="gender" id="male" value="male" checked>Male
+    <input type="radio" name="gender" id=" female" value="female">Female
+    <input type="radio" name="gender" id="other" value="other">Other
+    </div>
+    
+    <label for="country">Country:</label>
+    <select name="country" id="country">
+        <option value="nepal">Nepal</option>
+        <option value="india">India</option>
+        <option value="china">China</option>
+    </select>
+
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" required minlength="8" value="xxxxxxxx" >
+
+    <input type="submit" value="Submit">
+    </form>
+    <a href="mailto:prasumshrestha@gmail.com">EMAIL</a>
+</body>
+</html>

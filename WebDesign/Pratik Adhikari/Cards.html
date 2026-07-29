@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solar Model & Space Info</title>
+  
+  <style>
+    /* --- Font Imports --- */
+    @import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&family=Zen+Dots&display=swap');
+
+    /* --- Base & Body Styles --- */
+    body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+      overflow-x: hidden; /* Prevents horizontal scrolling */
+    }
+
+    /* --- Starry Background --- */
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: -1;
+    }
+    .stars::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 
+        50px 100px white, 200px 150px white, 350px 80px white,
+        500px 300px white, 700px 50px white, 850px 200px white,
+        1000px 400px white, 1200px 100px white, 150vw 20vh white,
+        30vw 80vh white, 60vw 45vh white, 80vw 90vh white;
+      animation: twinkle 2s infinite alternate;
+    }
+    @keyframes twinkle {
+      0% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+      100% { opacity: 0.3; }
+    }
+
+    /* --- Navbar Styles --- */
+    .nav {
+      color: white;
+      background: #1c2230;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0 40px;
+      height: 13vh;
+      font-size: 40px;
+      color: #80D3F7;
+      font-family: Montserrat;
+      position: sticky;
+      top: 0;
+      z-index: 1000; /* High z-index to stay above asteroids */
+      box-sizing: border-box;
+    }
+    .nav a {
+      color: white;
+      text-decoration: none;
+      padding: 0 30px;
+      font-size: 25px;
+    }
+    .nav img {
+      height: 12vh;
+      width: auto;
+    }
+    .a2 {
+      background: rgba(0, 191, 255, 0.9);
+      border-radius: 25px;
+      padding: 10px 25px;
+      color: white;
+      transition: background 0.3s;
+    }
+    .a2:hover {
+      background: rgba(0, 160, 215, 0.9);
+    }
+
+    /* --- Title Section Styles --- */
+    .title {
+      text-align: center;
+      padding: 60px;
+    }
+    .title .img {
+      width: 250px;
+      height: auto;
+    }
+    .head {
+      font-family: 'Zen Dots', sans-serif;
+      font-size: 50px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #f5d27a;
+      text-shadow: 0 0 7px #f5d27a, 0 0 7px #e6a75e, 10px 10px 10px black;
+    }
+    .bigword {
+      color: beige;
+      margin: 0 10px;
+    }
+    .bigword2 {
+      color: #00bfff;
+      font-size: 60px;
+    }
+
+    /* --- Solar System Animation (Rescaled to vmin) --- */
+    .parent {
+      position: relative;
+      width: 100%;
+      /* --- CHANGE: Set to 100% of small viewport height --- */
+      height: 100svh;
+      margin-top: 0; /* Removed margin */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .solar-system-animator {
+      position: relative;
+      /* --- CHANGE: Base size set to 90% of smallest viewport dimension --- */
+      width: 90vmin;
+      height: 90vmin;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+    .sun {
+      /* --- CHANGE: All values scaled from px to vmin --- */
+      height: 9vmin; /* was 50px */
+      width: 9vmin; /* was 50px */
+      background: radial-gradient(circle,
+        #fff5cc 0%, #ffcc33 40%, #ff9933 70%, #ff6600 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 3.6vmin #ffcc33, 0 0 7.2vmin #ff9933, 0 0 10.8vmin #ff6600; /* Scaled shadows */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      animation: sun 7s linear infinite;
+    }
+    @keyframes sun {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Orbits - Centered using absolute positioning */
+    .orbit1, .orbit2, .orbit3, .orbit4, .orbit5, .orbit6 {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    /* --- CHANGE: All orbit sizes scaled from px to vmin --- */
+    /* Z-indexes reversed to fix planet overlap glitch */
+    .orbit6 { height: 28.08vmin; width: 28.08vmin; z-index: 1; } /* Mercury (was 156px) */
+    .orbit5 { height: 39.6vmin; width: 39.6vmin; z-index: 2; } /* Venus (was 220px) */
+    .orbit4 { height: 55.8vmin; width: 55.8vmin; z-index: 3; } /* Earth (was 310px) */
+    .orbit3 { height: 64.8vmin; width: 64.8vmin; z-index: 4; } /* Mars (was 360px) */
+    .orbit2 { height: 79.2vmin; width: 79.2vmin; z-index: 5; } /* Jupiter (was 440px) */
+    .orbit1 { height: 90vmin; width: 90vmin; z-index: 6; } /* Saturn (was 500px) */
+
+    /* --- CHANGE: All planet sizes and animations scaled from px to vmin --- */
+    .mercury {
+      height: 3.24vmin; width: 3.24vmin; /* was 18px */
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #d9d9d9 0%, #b2b2b2 60%, #8c8c8c 100%);
+      box-shadow: 0 0 1.8vmin #b2b2b2, inset -0.9vmin -0.9vmin 1.8vmin #8c8c8c;
+      position: absolute;
+      animation: mercury 3s linear infinite;
+    }
+    @keyframes mercury {
+      0% { transform: rotate(0deg) translateX(14.04vmin) rotate(0deg); } /* was 78px */
+      100% { transform: rotate(360deg) translateX(14.04vmin) rotate(360deg); }
+    }
+    .venus {
+      height: 8.02vmin; width: 8.02vmin; /* was 44.6px */
+      background: radial-gradient(circle at 30% 30%, #fff2cc 0%, #e6b566 40%, #d9a441 75%, #a67c52 100%);
+      border-radius: 53%;
+      position: absolute;
+      animation: venus 7s linear infinite;
+    }
+    @keyframes venus {
+      0% { transform: rotate(0deg) translateX(19.8vmin) rotate(0deg); } /* was 110px */
+      100% { transform: rotate(360deg) translateX(19.8vmin) rotate(360deg); }
+    }
+    .earth {
+      width: 8.46vmin; height: 8.46vmin; /* was 47px */
+      background: radial-gradient(circle at 30% 30%, #ffffff 0%, #2a9df4 40%, #207567 75%, #16423c 100%);
+      border-radius: 50%;
+      position: absolute;
+      box-shadow: 0 0 3.6vmin #2a9df4, inset -0.9vmin -0.9vmin 1.8vmin #16423c;
+      animation: earth 12s linear infinite;
+    }
+    @keyframes earth {
+      0% { transform: rotate(0deg) translateX(27.9vmin) rotate(0deg); } /* was 155px */
+      100% { transform: rotate(360deg) translateX(27.9vmin) rotate(360deg); }
+    }
+    .mars {
+      width: 4.5vmin; height: 4.5vmin; /* was 25px */
+      background: radial-gradient(circle at 30% 30%, #ffb380 0%, #e65c00 60%, #993d00 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 1.8vmin #e65c00, inset -0.54vmin -0.54vmin 1.2vmin #993d00;
+      position: absolute;
+      animation: mars 23s linear infinite;
+    }
+    @keyframes mars {
+      0% { transform: rotate(0deg) translateX(32.4vmin) rotate(0deg); } /* was 180px */
+      100% { transform: rotate(360deg) translateX(32.4vmin) rotate(360deg); }
+    }
+    .jupiter {
+      width: 18.9vmin; height: 18.9vmin; /* was 105px */
+      background: radial-gradient(circle at 40% 40%, #ffe0b3 0%, #ffcc80 40%, #cc9966 70%, #804000 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 14.4vmin #cc9966, inset -2.7vmin -2.7vmin 7.2vmin #804000;
+      position: absolute;
+      animation: jupiter 147s linear infinite;
+    }
+    @keyframes jupiter {
+      0% { transform: rotate(0deg) translateX(39.6vmin) rotate(0deg); } /* was 220px */
+      100% { transform: rotate(360deg) translateX(39.6vmin) rotate(360deg); }
+    }
+    .saturn {
+      width: 14.4vmin; height: 14.4vmin; /* was 80px */
+      background: radial-gradient(circle at 40% 40%, #fff2cc 0%, #d9b38c 60%, #a67c52 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 12.6vmin #d9b38c, inset -2.7vmin -2.7vmin 6.3vmin #a67c52;
+      position: absolute;
+      animation: saturn 366s linear infinite;
+    }
+    @keyframes saturn {
+      0% { transform: rotate(0deg) translateX(45vmin) rotate(0deg); } /* was 250px */
+      100% { transform: rotate(360deg) translateX(45vmin) rotate(360deg); }
+    }
+
+    /* --- Asteroid Animations --- */
+    .stone {
+      width: 40px; height: 60px; border-radius: 27%;
+      position: absolute; z-index: 10;
+      background: linear-gradient(145deg, #2e2e2e, #595755, #9c9a94);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+      top: -100px; left: 30%;
+      animation: stone 8s linear 7s infinite;
+    }
+    @keyframes stone {
+      0% { transform: rotate(0) translateY(0); }
+      100% { transform: rotate(360deg) translateY(200vh); }
+    }
+    .stone2 {
+      width: 60px; height: 70px; border-radius: 27%;
+      position: absolute; z-index: 11;
+      background: linear-gradient(145deg, #3a2f25, #7a6246, #c2a78d);
+      box-shadow: 0 8px 20px rgba(240,93,35,0.4);
+      top: -100px; left: 10%;
+      animation: stone2 8s linear 2s infinite;
+    }
+    @keyframes stone2 {
+      0% { transform: rotate(0) translateY(0); }
+      100% { transform: rotate(360deg) translateY(200vh); }
+    }
+    .stone3 {
+      width: 60px; height: 30px; border-radius: 27%;
+      position: absolute; z-index: 11;
+      background: linear-gradient(145deg, #2f2f2f, #57554f, #9b978f);
+      top: -100px; left: 80%;
+      animation: stone3 8s linear 6s infinite;
+    }
+    @keyframes stone3 {
+      0% { transform: rotate(0) translateY(0); }
+      100% { transform: rotate(360deg) translateY(200vh); }
+    }
+    .stone4 {
+      width: 100px; height: 80px; border-radius: 27%;
+      position: absolute; z-index: 11;
+      background: linear-gradient(135deg, #1f1f2a, #424156, #a3a3b0);
+      top: -100px; left: 60%;
+      animation: stone4 8s linear 2s infinite;
+    }
+    @keyframes stone4 {
+      0% { transform: rotate(0) translateY(0); }
+      100% { transform: rotate(360deg) translateY(200vh); }
+    }
+
+    /* --- Cards Section Styles --- */
+    .article {
+      text-align: center;
+      font-size: 50px;
+      font-weight: bold;
+      color: #80D3F7;
+      margin-top: 100px;
+    }
+    .astro {
+      display: block;
+      margin: 30px auto;
+      width: 300px;
+      transition: width 0.3s ease;
+    }
+    .word {
+      display: block;
+      text-align: center;
+      font-size: 25px;
+      color: #ffcc70;
+      margin-bottom: 40px;
+    }
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      padding: 40px;
+    }
+    .cards div {
+      background: #1c2230;
+      border-radius: 15px;
+      width: 350px;
+      padding: 25px;
+      color: white;
+      box-shadow: 0 0 20px rgba(0,191,255,0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-sizing: border-box; /* Good practice */
+    }
+    .cards div:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(0,191,255,0.7);
+    }
+    .cards .img {
+      display: block;
+      margin: 0 auto;
+      width: 100px;
+      height: 100px; /* Added for consistency */
+      object-fit: contain; /* Prevents stretching */
+    }
+    h4, h3 {
+      text-align: center;
+      color: #00bfff;
+      font-size: 24px;
+    }
+    .fact {
+      display: block;
+      margin-top: 10px;
+      color: #f0db4f;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    ul li {
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    /* --- Responsiveness (Media Queries) --- */
+    
+    /* Medium Screens / Tablets */
+    @media (max-width: 768px) {
+      .nav {
+        font-size: 30px;
+        padding: 0 20px;
+      }
+      .nav a {
+        font-size: 20px;
+        padding: 0 15px;
+      }
+      .nav img {
+        height: 10vh;
+      }
+      .head {
+        font-size: 40px;
+      }
+      .bigword2 {
+        font-size: 50px;
+      }
+      .article {
+        font-size: 40px;
+      }
+      .astro {
+        width: 250px;
+      }
+      /* Hide distracting asteroids */
+      .stone, .stone2, .stone3, .stone4 {
+        display: none;
+      }
+    }
+
+    /* Small Screens / Mobile */
+    @media (max-width: 480px) {
+      .nav {
+        flex-direction: column; /* Stack logo and links */
+        height: auto;
+        padding: 15px;
+      }
+      .nav img {
+        height: 8vh;
+      }
+      .nav div { /* Container for links */
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+      .nav a {
+        padding: 10px;
+        font-size: 18px;
+      }
+      .a2 {
+        padding: 8px 20px;
+      }
+      .title {
+        padding: 30px 15px;
+      }
+      .head {
+        font-size: 30px;
+      }
+      .bigword2 {
+        font-size: 40px;
+      }
+      .article {
+        font-size: 30px;
+        margin-top: 50px;
+      }
+      .astro {
+        width: 200px;
+      }
+      .cards {
+        padding: 20px 10px;
+      }
+      .cards div {
+        width: 95%; /* Make cards full-width */
+        padding: 20px;
+      }
+      h4, h3 {
+        font-size: 20px;
+      }
+      .fact {
+        font-size: 16px;
+      }
+      ul li {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="stars"></div>
+  <div class="stone"></div>
+  <div class="stone2"></div>
+  <div class="stone3"></div>
+  <div class="stone4"></div>
+
+  <header class="header"> 
+    <div class="nav">
+      <img src="https://i.ibb.co/fG28s9vg/yourimage.jpg">
+      <div>
+        <a href="#solar">Home</a>
+        <a class="a2" href="#cards">Learn</a>
+      </div>
+    </div>
+  </header>
+
+  <section id="solar">
+    <div class="title">
+      <img class="img" src="https://i.ibb.co/LdmgY0Fp/07dc7c80da190ee76ec0637983dd6370-removebg-preview.png" alt="Hello img" border="0">
+      <div class="head">Welcome <span class="bigword">To</span> <div class="bigword2">My Space</div></div>
+    </div>
+
+    <div class="parent">
+      <div class="solar-system-animator">
+        <div class="sun"></div>
+        <div class="orbit1">
+          <div class="saturn"></div>
+        </div> 
+        <div class="orbit2">
+          <div class="jupiter"></div>
+        </div> 
+        <div class="orbit3">
+          <div class="mars"></div>
+        </div>
+        <div class="orbit4">
+          <div class="earth"></div>
+        </div>
+        <div class="orbit5">
+          <div class="venus"></div>
+        </div>
+        <div classm="orbit6">
+          <div class="mercury"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cards">
+    <article class="article">Exploring The Space</article>
+    <img class="astro" src="https://i.ibb.co/CKGSnrHd/8d164a8564bb400f5a605410bb7cae76-removebg-preview.png" alt="astronaut">
+    <span class="word">Explore! Explore! Explore!!</span>
+
+    <div class="cards">
+      <div class="card1">
+        <img class="img" src="https://i.ibb.co/23kymhTd/C5188db6689295b7129a80f83c6b3c2b-removebg-preview.png" alt="Sun">
+        <h4>SUN</h4>
+        <p>The Sun is a massive ball of hot gases and the center of our solar system.</p>
+        <span class="fact">Key Facts</span>
+        <ul>
+          <li>Age: About 4.6 billion years</li>
+          <li>Temperature: ~5,500°C on the surface</li>
+          <li><b>Fun Fact:</b> Contains 99.8% of the solar system’s total mass.</li>
+        </ul>
+      </div>
+
+      <div class="card2">
+        <img class="img" src="https://i.ibb.co/pBm7pB9v/58084227945dcb2672841631e2187d26-removebg-preview.png" alt="Earth">
+        <h4>EARTH</h4>
+        <p>The only blue planet that supports life.</p>
+        <span class="fact">Key Facts</span>
+        <ul>
+          <li>Age: About 4.5 billion years</li>
+          <li>Distance from Sun: ~150 million km</li>
+          <li>Moon: 1 natural satellite</li>
+          <li><b>Fun Fact:</b> 71% of Earth’s surface is covered by water.</li>
+        </ul>
+      </div>
+
+      <div class="card3">
+        <img class="img" src="https://i.ibb.co/C53HqP27/057f9afad62b6b4b4988fa5ca003fe87-removebg-preview.png" alt="Dwarf planet">
+        <h4>Dwarf Planet</h4>
+        <p>Dwarf planets orbit the Sun but are not dominant in their orbit.</p>
+        <span class="fact">Key Facts</span>
+        <ul>
+          <li>Round but not dominant in orbit</li>
+          <li>Located mostly in the Kuiper Belt</li>
+          <li><b>Fun Fact:</b> Pluto was a planet until 2006.</li>
+        </ul>
+      </div>
+
+      <div class="card4">
+        <img class="img" src="https://i.ibb.co/hRVhc2KG/5d0cc9bb2543c0f5d505c83e75d5a0bb-removebg-preview.png" alt="Asteroid">
+        <h4>ASTEROID</h4>
+        <p>Asteroids are rocky objects left from the early formation of our solar system.</p>
+        <span class="fact">Key Facts</span>
+        <ul>
+          <li>Main Location: Asteroid Belt</li>
+          <li>Size: Few meters to hundreds of kilometers</li>
+          <li>Largest: Ceres (also a dwarf planet)</li>
+          <li><b>Fun Fact:</b> Some may contain gold and iron.</li>
+        </ul>
+      </div>
+
+      <div class="card5">
+        <h3>KUIPER BELT</h3>
+        <p>A vast ring of icy bodies beyond Neptune.</p>
+        <span class="fact">Key Facts</span>
+        <ul>
+          <li><b>Location:</b> Starts about 30 AU from the Sun</li>
+          <li><b>Shape:</b> Donut-shaped region</li>
+          <li><b>Contains:</b> Ice, rock, and frozen gases</li>
+          <li><b>Fun Fact:</b> Like a “second asteroid belt.”</li>
+        </ul>
+      </div>
+
+      <div class="card6">
+        <h3>SPACE PROBES</h3>
+        <p>Robotic spacecraft that explore space beyond Earth’s orbit.</p>
+        <span class="fact">Key Facts</span>
+        <ul>
+          <li><b>Famous:</b> Voyager 1 & 2, New Horizons, Juno</li>
+          <li>No humans onboard — fully robotic</li>
+          <li><b>Power:</b> Solar or nuclear energy</li>
+          <li><b>Fun Fact:</b> Voyager 1 is the farthest human-made object in space.</li>
+        </ul>
+      </div>
+
+      <div class="card7">
+        <img class="img" src="https://i.ibb.co/JjS647Y2/F0554297514ca50810f6fb053929a96f-2-removebg-preview.png" alt="Satellite">
+        <h4>SATELLITE</h4>
+        <p>Objects orbiting planets — natural or man-made for communication and research.</p>
+        <span class="fact">Key Facts</span>
+        <ul>
+          <li><b>Uses:</b> Weather, GPS, communication, imaging</li>
+          <li><b>Fun Fact:</b> Thousands orbit Earth today.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
